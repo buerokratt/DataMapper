@@ -1,13 +1,14 @@
 import express from "express";
 import { create } from "express-handlebars";
+import * as html_to_pdf from "html-pdf-node";
+import fs from "fs";
 
-import * as fs from "node:fs";
 import * as path from "path";
 import { fileURLToPath } from "url";
 import sendMockEmail from "./js/email/sendMockEmail.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const PORT = 3100;
+const PORT = 3000;
 const app = express();
 const hbs = create({});
 app.use(express.json());
@@ -22,6 +23,20 @@ app.get("/", (req, res) => {
 
 app.get("/hbs/*", (req, res) => {
   res.render(req.params[0]);
+});
+
+app.get("/js/convert/pdf", (req, res) => {
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader("Content-Disposition", "attachment; filename=chat-history.pdf");
+  const template = fs
+    .readFileSync(__dirname + "/views/pdf.handlebars")
+    .toString();
+  let file = { content: template };
+  let options = { format: "A4" };
+
+  html_to_pdf.generatePdf(file, options).then((pdfBuffer) => {
+    res.send(pdfBuffer);
+  });
 });
 
 app.get("/js/*", (req, res) => {
