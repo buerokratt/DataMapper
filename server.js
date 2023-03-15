@@ -25,6 +25,17 @@ app.get("/hbs/*", (req, res) => {
   res.render(req.params[0]);
 });
 
+app.post('/hbs/*', (req, res) => {
+  res.render(req.params[0], req.body, function(_, response) {
+    if (req.get('type') === 'csv') {
+      res.json({response});
+    } else if (req.get('type') === 'json') {
+      res.json(JSON.parse(response));
+    }
+      res.render(req.params[0], req.body);
+    });
+});
+
 app.get("/js/convert/pdf", (req, res) => {
   res.setHeader("Content-Type", "application/pdf");
   res.setHeader("Content-Disposition", "attachment; filename=chat-history.pdf");
