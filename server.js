@@ -2,6 +2,7 @@ import express from "express";
 import { create } from "express-handlebars";
 import * as html_to_pdf from "html-pdf-node";
 import fs from "fs";
+import file from './js/file/file-manager';
 
 import * as path from "path";
 import { fileURLToPath } from "url";
@@ -12,6 +13,8 @@ const PORT = 3000;
 const app = express();
 const hbs = create({});
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }))
+app.use('/js/file', file);
 
 app.engine("handlebars", hbs.engine);
 app.set("view engine", "handlebars");
