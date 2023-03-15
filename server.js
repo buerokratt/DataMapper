@@ -2,7 +2,7 @@ import express from "express";
 import { create } from "express-handlebars";
 import * as html_to_pdf from "html-pdf-node";
 import fs from "fs";
-import file from './js/file/file-manager';
+import file from './js/file/file-manager.js';
 
 import * as path from "path";
 import { fileURLToPath } from "url";

@@ -1,7 +1,7 @@
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
-import { buildContentFilePath, isValidFilename } from './util';
+import { buildContentFilePath, isValidFilename } from '../util/utils.js';
 const router = express.Router();
 
 router.post('/create', (req, res) => {
