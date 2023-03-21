@@ -1,12 +1,16 @@
 import path from 'path';
 import fs from 'fs';
 
-export const buildContentFilePath = (filename) => {
-  return path.join(process.env.CONTENT_FOLDER || 'data', filename)
+export const buildContentFilePath = (fileName) => {
+  return path.join(process.env.CONTENT_FOLDER || 'data', fileName)
 }
 
-export const isValidFilename = (filename) => {
-  return RegExp('^[0-9a-zA-Z-._/]+$').test(filename);
+export const isValidFilename = (fileName) => {
+  return fileName && RegExp('^[0-9a-zA-Z-._/]+$').test(fileName);
+}
+
+export const isValidFilePath = (filePath) => {
+  return filePath && isValidFilename(filePath) && path.normalize(filePath).includes('..') === false
 }
 
 export const getAllFiles = function (dirPath) {
