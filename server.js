@@ -9,7 +9,7 @@ import { fileURLToPath } from "url";
 import sendMockEmail from "./js/email/sendMockEmail.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const app = express();
 const hbs = create({});
 app.use(express.json());
