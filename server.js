@@ -3,6 +3,7 @@ import { create } from "express-handlebars";
 import * as html_to_pdf from "html-pdf-node";
 import fs from "fs";
 import files from './controllers/files.js';
+import * as helpers from "./lib/helpers.js";
 
 import * as path from "path";
 import { fileURLToPath } from "url";
@@ -11,7 +12,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const PORT = process.env.PORT || 3000;
 const app = express();
-const hbs = create({});
+const hbs = create({ helpers });
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 app.use('/file-manager', files);
