@@ -1,4 +1,5 @@
 import express from 'express';
+import checkIfFileExists from '../js/file/exists.js';
 import createFile from '../js/file/create.js';
 import moveFile from '../js/file/move.js';
 import copyFile from '../js/file/copy.js';
@@ -7,6 +8,11 @@ import readFile from '../js/file/read.js';
 import editFile from '../js/file/edit.js';
 
 const router = express.Router();
+
+router.post('/exists', async (req, res) => {
+  const result = await checkIfFileExists(req.body.file_path, req.body.content)
+  return res.status(result.error ? 400 : 200).json(result)
+})
 
 router.post('/create', async (req, res) => {
   const result = await createFile(req.body.file_path, req.body.content)

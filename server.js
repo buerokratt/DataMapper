@@ -4,7 +4,6 @@ import * as html_to_pdf from "html-pdf-node";
 import fs from "fs";
 import files from './controllers/files.js';
 import * as helpers from "./lib/helpers.js";
-
 import * as path from "path";
 import { fileURLToPath } from "url";
 import sendMockEmail from "./js/email/sendMockEmail.js";
