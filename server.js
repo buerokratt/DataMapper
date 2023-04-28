@@ -57,11 +57,11 @@ app.post("/js/email/*", (req, res) => {
 });
 
 app.post("/example/post", (req, res) => {
-  const { name } = req.body;
-  res.writeHead(200, { 'Content-Type': 'application/json' });
-  console.log("POST endpoint received " + JSON.stringify(req.body));
-  let resJson = "{\"message\": \"received value " + name + "\"}";
-  res.end(resJson);
+    const { name } = req.body;
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    console.log("POST endpoint received "+JSON.stringify(req.body));
+    let resJson = "{\"message\": \"received value "+name+"\"}";
+    res.end(resJson);
 })
 
 app.listen(PORT, () => {
