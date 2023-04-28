@@ -1,11 +1,11 @@
 import express from "express";
 import { create } from "express-handlebars";
-import * as html_to_pdf from "html-pdf-node";
 import fs from "fs";
 
 import * as path from "path";
 import { fileURLToPath } from "url";
 import sendMockEmail from "./js/email/sendMockEmail.js";
+import { generatePdf } from "./js/generate/pdf.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const PORT = 3000;
@@ -26,17 +26,19 @@ app.get("/hbs/*", (req, res) => {
 });
 
 app.get("/js/convert/pdf", (req, res) => {
-  res.setHeader("Content-Type", "application/pdf");
-  res.setHeader("Content-Disposition", "attachment; filename=chat-history.pdf");
+  const filename = "chat-history";
   const template = fs
     .readFileSync(__dirname + "/views/pdf.handlebars")
     .toString();
-  let file = { content: template };
-  let options = { format: "A4" };
 
-  html_to_pdf.generatePdf(file, options).then((pdfBuffer) => {
-    res.send(pdfBuffer);
-  });
+  generatePdf(filename, template, res)
+});
+
+app.post("/js/generate/pdf", (req, res) => {
+  const filename = req.body.filename;
+  const template = req.body.template;
+
+  generatePdf(filename, template, res)
 });
 
 app.get("/js/*", (req, res) => {
@@ -55,11 +57,11 @@ app.post("/js/email/*", (req, res) => {
 });
 
 app.post("/example/post", (req, res) => {
-    const { name } = req.body;
-    res.writeHead(200, {'Content-Type': 'application/json'});
-    console.log("POST endpoint received "+JSON.stringify(req.body));
-    let resJson = "{\"message\": \"received value "+name+"\"}";
-    res.end(resJson);
+  const { name } = req.body;
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  console.log("POST endpoint received " + JSON.stringify(req.body));
+  let resJson = "{\"message\": \"received value " + name + "\"}";
+  res.end(resJson);
 })
 
 app.listen(PORT, () => {
