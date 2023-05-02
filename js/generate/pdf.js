@@ -7,6 +7,11 @@ export async function generatePdf(filename, template, res) {
   let file = { content: template };
   let options = { format: "A4" };
 
-  const pdfBuffer = await html_to_pdf.generatePdf(file, options);
-  res.send(pdfBuffer);
+  try {
+    const pdfBuffer = await html_to_pdf.generatePdf(file, options);
+    res.send(pdfBuffer);
+  } catch (err) {
+    console.error(err)
+    res.sendStatus(500);
+  }
 }
