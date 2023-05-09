@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node:19
+FROM node:19
 
 ENV NODE_ENV development
 WORKDIR /workspace/app/
