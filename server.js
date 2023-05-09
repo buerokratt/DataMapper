@@ -1,6 +1,9 @@
 import express from "express";
 import { create } from "express-handlebars";
 import * as html_to_pdf from "html-pdf-node";
+import files from "./controllers/files.js";
+import secrets from "./controllers/secrets.js";
+import * as helpers from "./lib/helpers.js";
 import fs from "fs";
 
 import * as path from "path";
@@ -8,21 +11,30 @@ import { fileURLToPath } from "url";
 import sendMockEmail from "./js/email/sendMockEmail.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const app = express();
-const hbs = create({});
+const hbs = create({ helpers });
 app.use(express.json());
 
 app.engine("handlebars", hbs.engine);
 app.set("view engine", "handlebars");
 app.set("views", "./views");
-
+app.use(express.urlencoded({ extended: true }));
+app.use("/file-manager", files);
+app.use("/secrets", secrets);
 app.get("/", (req, res) => {
   res.render("home", { title: "Home" });
 });
 
-app.get("/hbs/*", (req, res) => {
-  res.render(req.params[0]);
+app.post("/hbs/*", (req, res) => {
+  res.render(req.params[0], req.body, function (_, response) {
+    if (req.get("type") === "csv") {
+      res.json({ response });
+    } else if (req.get("type") === "json") {
+      res.json(JSON.parse(response));
+    }
+    res.render(req.params[0], req.body);
+  });
 });
 
 app.get("/js/convert/pdf", (req, res) => {
@@ -55,12 +67,9 @@ app.post("/js/email/*", (req, res) => {
 });
 
 app.post("/example/post", (req, res) => {
-    const { name } = req.body;
-    res.writeHead(200, {'Content-Type': 'application/json'});
-    console.log("POST endpoint received "+JSON.stringify(req.body));
-    let resJson = "{\"message\": \"received value "+name+"\"}";
-    res.end(resJson);
-})
+  console.log(`POST endpoint received ${JSON.stringify(req.body)}`);
+  res.status(200).json({ message: `received value ${req.body.name}` });
+});
 
 app.listen(PORT, () => {
   console.log("Nodejs server running on http://localhost:%s", PORT);
