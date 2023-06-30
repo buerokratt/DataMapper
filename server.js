@@ -8,11 +8,16 @@ import { fileURLToPath } from "url";
 import sendMockEmail from "./js/email/sendMockEmail.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+import handlebars from "handlebars";
+import ifEquals from "./js/helpers/ifEqualsHelper.js";
+
 const PORT = 3000;
 const app = express();
 const hbs = create({});
-app.use(express.json());
 
+handlebars.registerHelper("ifEquals", ifEquals);
+
+app.use(express.json());
 app.engine("handlebars", hbs.engine);
 app.set("view engine", "handlebars");
 app.set("views", "./views");
@@ -41,6 +46,11 @@ app.get("/js/convert/pdf", (req, res) => {
 
 app.get("/js/*", (req, res) => {
   res.send(fs.readFileSync(__dirname + req.path + ".js").toString());
+});
+
+app.post("/hbs/*", (req, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.render(req.params[0], req.body);
 });
 
 // NOTE: This service is only for testing purposes. Needs to be replaced with actual mail service.
