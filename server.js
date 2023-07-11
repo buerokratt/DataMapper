@@ -1,11 +1,10 @@
 import express from "express";
 import { create } from "express-handlebars";
 import * as html_to_pdf from "html-pdf-node";
-import files from "./controllers/files.js";
 import secrets from "./controllers/secrets.js";
-import * as helpers from "./lib/helpers.js";
 import fs from "fs";
-
+import files from "./controllers/files.js";
+import * as helpers from "./lib/helpers.js";
 import * as path from "path";
 import { fileURLToPath } from "url";
 import sendMockEmail from "./js/email/sendMockEmail.js";
@@ -15,12 +14,12 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 const hbs = create({ helpers });
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use("/file-manager", files);
 
 app.engine("handlebars", hbs.engine);
 app.set("view engine", "handlebars");
 app.set("views", "./views");
-app.use(express.urlencoded({ extended: true }));
-app.use("/file-manager", files);
 app.use("/secrets", secrets);
 app.get("/", (req, res) => {
   res.render("home", { title: "Home" });
