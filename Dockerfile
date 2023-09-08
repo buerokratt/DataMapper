@@ -1,4 +1,4 @@
-FROM node:19
+FROM node:20
 
 ENV NODE_ENV development
 WORKDIR /workspace/app/
