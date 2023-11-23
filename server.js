@@ -55,9 +55,16 @@ app.use(
   }
  }
 
+const EXTENSION = process.env.EXTENSION || ".handlebars";
+
 app.engine(".handlebars", engine({
   layoutsDir: path.join(__dirname, 'views/layouts')
 }));
+
+app.engine(".hbs",  engine({
+  layoutsDir: path.join(__dirname, 'views/layouts')
+}));
+
 app.set("views", ["./views", "./module/*/hbs/"]);
 
 app.use("/secrets", secrets);
@@ -82,13 +89,15 @@ app.post("/hbs/*", handled( async (req, res) => {
 
 app.post("/:project/hbs/*", handled (async (req, res) => {
   var project = req.params["project"]; 
-  var path = __dirname + "/module/" + project + "/views/" + req.params[0] + ".handlebars";
+  var path = __dirname + "/module/" + project + "/hbs/" + req.params[0] + EXTENSION;
   res.render(path, req.body, function (err, response) {
     if (err) console.log("err:", err);
     if (req.get("type") === "csv") {
       res.json({ response });
     } else if (req.get("type") === "json") {
       res.json(JSON.parse(response));
+    } else {
+      res.send(response);
     }
   });
 }));
