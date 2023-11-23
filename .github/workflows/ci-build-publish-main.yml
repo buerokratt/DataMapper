@@ -2,7 +2,7 @@ name: Build and publish DMAPPER
 
 on:
   push:
-    branches: [ dev ]
+    branches: [  19-update-datamapper-to-project-based-dsls ]
     paths:
       - '.env'
 
