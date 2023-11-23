@@ -58,7 +58,7 @@ app.use(
 app.engine(".handlebars", engine({
   layoutsDir: path.join(__dirname, 'views/layouts')
 }));
-app.set("views", ["./views", "./module/*/views/"]);
+app.set("views", ["./views", "./module/*/hbs/"]);
 
 app.use("/secrets", secrets);
 
