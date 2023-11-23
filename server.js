@@ -63,7 +63,7 @@ app.set("views", ["./views", "./module/*/views/"]);
 app.use("/secrets", secrets);
 
 app.get("/", handled( async (req, res, next) => {
-  res.render("home", { title: "Home" });
+  res.render(__dirname + "/views/home.handlebars", { title: "Home" });
 }));
 
 app.post("/hbs/*", handled( async (req, res) => {
