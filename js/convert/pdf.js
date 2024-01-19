@@ -1,4 +1,4 @@
-export const generateHTMLTable = (messages, chatHistoryTable, csaTitleVisible, csaNameVisible) => {
+export const generateHTMLTable = (chatHistoryTable, { messages, csaTitleVisible, csaNameVisible }) => {    
   let _html = `<tr class="header">
                   <th style="text-align: left">Autor</th>
                   <th style="text-align: left">Sõnum</th>
