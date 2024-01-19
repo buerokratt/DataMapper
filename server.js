@@ -68,7 +68,9 @@ app.post("/js/convert/pdf", (req, res) => {
   const dom = new JSDOM(template);
   generateHTMLTable(
     req.body.data,
-    dom.window.document.getElementById("chatHistoryTable")
+    dom.window.document.getElementById("chatHistoryTable"),
+    req.body.csaTitleVisible,
+    req.body.csaNameVisible,
   );
   generatePdfToBase64(dom.window.document.documentElement.innerHTML, res);
 });
