@@ -61,7 +61,6 @@ app.post("/hbs/*", (req, res) => {
 });
 
 app.post("/js/convert/pdf", (req, res) => {
-  const filename = "chat-history";
   const template = fs
     .readFileSync(__dirname + "/views/pdf.handlebars")
     .toString();
