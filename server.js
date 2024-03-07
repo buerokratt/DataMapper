@@ -17,7 +17,8 @@ import { generatePdf } from "./js/generate/pdf.js";
 import { generatePdfToBase64 } from "./js/generate/pdfToBase64.js";
 import { generateHTMLTable } from "./js/convert/pdf.js";
 
-import * as helpers from "/workspace/app/module/backoffice/lib/helpers.js";
+//import * as helpers from "/workspace/app/module/backoffice/lib/helpers.js";
+import * as helpers from "./lib/helpers.js";
 
 import { engine } from 'express-handlebars';
 
@@ -25,6 +26,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
   modulusLength: 2048,
 });
+
+const hbs = create({ helpers });
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -61,9 +64,7 @@ app.engine(".handlebars", engine({
   layoutsDir: path.join(__dirname, 'views/layouts')
 }));
 
-app.engine(".hbs",  engine({
-  layoutsDir: path.join(__dirname, 'views/layouts')
-}));
+app.engine(".hbs",  hbs.engine);
 
 app.set("views", ["./views", "./module/*/hbs/"]);
 
