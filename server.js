@@ -17,7 +17,7 @@ import { generatePdf } from "./js/generate/pdf.js";
 import { generatePdfToBase64 } from "./js/generate/pdfToBase64.js";
 import { generateHTMLTable } from "./js/convert/pdf.js";
 
-import * as helpers from "./lib/helpers.js";
+import * as helpers from "/app/module/backoffice/lib/helpers.js";
 
 import { engine } from 'express-handlebars';
 
