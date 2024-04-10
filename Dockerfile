@@ -10,6 +10,7 @@ COPY views views
 COPY package.json .
 COPY server.js .
 COPY module module
+COPY main.handlebars .
 
 COPY .env .
 RUN echo BUILDTIME=`date +%s` >> .env

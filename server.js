@@ -10,7 +10,7 @@ import crypto from "crypto";
 import encryption from "./controllers/encryption.js";
 import decryption from "./controllers/decryption.js";
 import secrets from "./controllers/secrets.js";
- import files from "./controllers/files.js";
+import files from "./controllers/files.js";
 
 import * as path from "path";
 import { fileURLToPath } from "url";
@@ -52,6 +52,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
   modulusLength: 2048,
 });
+
+const hbs = create({ helpers });
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -109,9 +111,7 @@ app.engine(".handlebars", engine({
   layoutsDir: path.join(__dirname, 'views/layouts')
 }));
 
-app.engine(".hbs",  engine({
-  layoutsDir: path.join(__dirname, 'views/layouts')
-}));
+app.engine(".hbs",  hbs.engine);
 
 app.set("view engine", "handlebars");
 
