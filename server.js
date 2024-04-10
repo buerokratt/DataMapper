@@ -120,7 +120,6 @@ app.set("views", ["./views", "./module/*/hbs/", "./module/*/"]);
 app.use("/secrets", secrets);
 
 app.get("/", handled( async (req, res, next) => {
-  console.log(process.env);
   res.render(__dirname + "/views/home.handlebars", { title: "Home" });
 }));
 
@@ -151,7 +150,7 @@ app.post("/hbs/*", handled( async (req, res) => {
 
 app.post("/:project/hbs/*", handled (async (req, res) => {
   var project = req.params["project"]; 
-  var path = __dirname + "/module/" + provsject + "/hbs/" + req.params[0] + EXTENSION;
+  var path = __dirname + "/module/" + project + "/hbs/" + req.params[0] + EXTENSION;
   // var path = req.params[0] + EXTENSION;
   res.render(path, req.body, function (err, response) {
     if (err) console.log("err:", err);
