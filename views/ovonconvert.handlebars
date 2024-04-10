@@ -1,0 +1,81 @@
+'{
+    "ovon": {
+        "schema": {
+            "url": "https://ovon/conversation/pre-alpha-1.0.1",
+            "version": "1.0"      
+        },
+
+        "conversation": {
+            "id": "31050879662407560061859425913208",
+
+            "speakers": [
+                {
+                    "speaker-id" : "mh8k907jjj",   
+                    "speaker_type" : "bot",
+                    "spoken-name" : "Bot Mc-bot Face",
+                    "display-name" : "Bot Mc-bot Face",
+                    "avatar-url": "https://example.com/display-name-avatar.png"
+                },
+                {
+                    "speaker-id" : "sdfkjhsdg98797234523",   
+                    "speaker_type" : "human",
+                    "displayname": "User Mc-user Face",
+                    "spoken-name" : "User Mc-user Face",
+                    "avatar-url": "https://example.com/usermcuserface.png"
+                }
+            ]
+        }, 
+
+        "sender": {
+            "from": "https://example.com/message-from",
+            "reply-to": "https://example.com/reply-message-to"
+        },
+
+        "events": [
+            {
+                "event-type": "utterance",
+                "parameters": {
+
+                    "dialog-event": {
+                        "speaker-id": "mh8k907jjj",
+                        "span": { "start-time": "2023-06-14 02:06:07+00:00" },
+                        "features": {
+                            "text": {
+                                "mime-type": "text/plain",
+                                "tokens": [ { "value": "OK. I'll pass you over to pharmacy dot com."  } ]
+                            }
+                        }
+                    }
+                }
+            },
+            { 
+                "event-type": "assistant-delegate",
+                "parameters": {
+                    "to": {
+                        "url": "https://mybot.pharmacy.com"
+                    },
+                    "whisper-dialog-event*": {
+                        "speaker-id": "xxxxx",
+                        "span": { "start-time": "2023-06-14 02:06:07+00:00" },
+                        "features": {
+                            "text": {
+                                "mime-type": "text/plain",
+                                "tokens": [ { "value": "{{input}}"  } ]
+                            }
+                        }
+                    }
+                }
+            },
+            { 
+                "event-type": "utterance-forward",
+                "parameters": {
+                    "to": {
+                        "url": "https://example.com/DMR",
+                        "labels*": ""
+                    }
+                }
+            }
+
+        ]
+    }
+}'
