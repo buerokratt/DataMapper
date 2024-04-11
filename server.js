@@ -33,6 +33,7 @@ import fileDelete from "./js/file/delete.js";
 import deleteIntentFile from "./js/file/deleteIntentFile.js";
 import fileCheck from "./js/file/fileCheck.js";
 import merge from "./js/util/merge.js";
+import formDetails from "./js/forms/getFormDetailedInformation.js";
 import mergeObjects from "./js/util/mergeObjects.js";
 import mergeRemoveKey from "./js/util/mergeRemoveKey.js";
 import mergeRemoveArrayValue from "./js/util/mergeRemoveArrayValue.js";
@@ -40,13 +41,23 @@ import mergeReplaceArrayElement from "./js/util/mergeReplaceArrayElement.js";
 import validate from "./js/util/arrayElementsLength.js";
 import yamlToJson from "./js/convert/yamlToJson.js";
 import jsonToYaml from "./js/convert/jsonToYaml.js";
+import jsonToYamlStories from "./js/convert/jsonToYamlStories.js";
 import csvToJson from "./js/convert/csvToJson.js";
 import stringSplit from "./js/util/stringSplit.js";
 import stringToArray from "./js/util/stringToArray.js";
 import stringReplace from "./js/util/stringReplace.js";
 import removeRulesByIntentName from "./js/util/removeRulesByIntentName.js";
 import domainUpdateExistingResponse from "./js/util/domainUpdateExistingResponse.js";
-
+import replaceKeyValueObj from "./js/util/updateKeyValueObj.js";
+import objectListContainsId from "./js/util/objectListContainsId.js";
+import validateStoriesRules from "./js/validation/validateStoriesRules.js";
+import replaceNextElementInArray from "./js/util/replaceNextElementInArray.js";
+import updateParametersByKey from "./js/docker/updateParametersByKey.js";
+import createExpressionFromDateDays from "./js/cron/createExpressionFromDateDays.js";
+import incrementDoubleDigitStringVersion from "./js/util/incrementDoubleDigitStringVersion.js";
+import updateVersionForBot from "./js/docker/updateVersionForBot.js";
+import botTrainedVersion from "./js/docker/botTrainedVersion.js";
+import removeServicesConnectedToIntent from "./js/util/removeServicesConnectedToIntent.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
@@ -60,26 +71,45 @@ const app = express();
 
 app.use(express.json());
 app.use("/file-manager", files);
-app.use('/file/read', fileRead);
-app.use('/file/read-directory', fileReadDir);
-app.use('/file/write', fileWrite);
-app.use('/file/delete', fileDelete);
-app.use('/file/delete-intent', deleteIntentFile);
-app.use('/file/check', fileCheck);
-app.use('/merge', merge);
-app.use('/merge/objects', mergeObjects);
-app.use('/merge/remove-key', mergeRemoveKey);
-app.use('/merge/remove-array-value', mergeRemoveArrayValue);
-app.use('/merge/replace-array-element', mergeReplaceArrayElement);
-app.use('/validate/array-elements-length', validate);
-app.use('/convert/yaml-to-json', yamlToJson)
-app.use('/convert/json-to-yaml', jsonToYaml)
-app.use('/convert/csv-to-json', csvToJson)
-app.use('/convert/string/split', stringSplit)
-app.use('/convert/string/replace', stringReplace)
-app.use('/convert/string/toArray', stringToArray)
-app.use('/rules/remove-by-intent-name', removeRulesByIntentName);
-app.use('/domain/update-existing-response', domainUpdateExistingResponse)
+app.use("/file/read", fileRead);
+app.use("/file/read-directory", fileReadDir);
+app.use("/file/write", fileWrite);
+app.use("/file/delete", fileDelete);
+app.use("/file/delete-intent", deleteIntentFile);
+app.use("/file/check", fileCheck);
+app.use("/merge", merge);
+app.use("/forms/detailed-information", formDetails);
+app.use("/merge/objects", mergeObjects);
+app.use("/replace/key-value-in-obj", replaceKeyValueObj);
+app.use("/merge/remove-key", mergeRemoveKey);
+app.use("/merge/remove-array-value", mergeRemoveArrayValue);
+app.use("/merge/replace-array-element", mergeReplaceArrayElement);
+app.use("/validate/array-elements-length", validate);
+app.use("/convert/yaml-to-json", yamlToJson);
+app.use("/convert/json-to-yaml", jsonToYaml);
+app.use("/convert/json-to-yaml-stories", jsonToYamlStories);
+app.use("/convert/csv-to-json", csvToJson);
+app.use("/convert/string/split", stringSplit);
+app.use("/convert/string/replace", stringReplace);
+app.use("/convert/string/toArray", stringToArray);
+app.use("/rules/remove-by-intent-name", removeRulesByIntentName);
+app.use("/array/replace-next-element", replaceNextElementInArray);
+app.use("/docker/update-parameter-by-key", updateParametersByKey);
+app.use("/docker/update-version-for-bot", updateVersionForBot);
+app.use("/docker/bot-trained-version", botTrainedVersion);
+app.use("/cron/generate-expression-date-days", createExpressionFromDateDays);
+app.use("/domain/update-existing-response", domainUpdateExistingResponse);
+app.use("/util/objectListContainsId", objectListContainsId);
+app.use(
+  "/util/increase-double-digit-version",
+  incrementDoubleDigitStringVersion
+);
+app.use("/validate/validate-stories-rules", validateStoriesRules);
+app.use(
+  "/filter_out_services_connected_to_intent",
+  removeServicesConnectedToIntent
+);
+app.use(express.urlencoded({ extended: true }));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -120,7 +150,6 @@ app.set("views", ["./views", "./module/*/hbs/", "./module/*/"]);
 app.use("/secrets", secrets);
 
 app.get("/", handled( async (req, res, next) => {
-  console.log(process.env);
   res.render(__dirname + "/views/home.handlebars", { title: "Home" });
 }));
 
@@ -151,7 +180,7 @@ app.post("/hbs/*", handled( async (req, res) => {
 
 app.post("/:project/hbs/*", handled (async (req, res) => {
   var project = req.params["project"]; 
-  var path = __dirname + "/module/" + provsject + "/hbs/" + req.params[0] + EXTENSION;
+  var path = __dirname + "/module/" + project + "/hbs/" + req.params[0] + EXTENSION;
   // var path = req.params[0] + EXTENSION;
   res.render(path, req.body, function (err, response) {
     if (err) console.log("err:", err);
