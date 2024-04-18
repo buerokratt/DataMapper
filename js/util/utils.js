@@ -68,3 +68,17 @@ export const readFile = function (filePath) {
   const data = fs.readFileSync(filePath, { encoding: "utf8" });
   return Buffer.from(data).toString();
 };
+
+export const parseBoolean = (value) => {
+  return value?.toLowerCase() === "true";
+};
+
+export const getUrl = (dir) => {
+  let startIndex;
+  if (dir.includes("/POST")) {
+    startIndex = dir.indexOf("/POST") + "/POST".length;
+  } else {
+    startIndex = dir.indexOf("/GET") + "/GET".length;
+  }
+  return dir.substring(startIndex);
+};

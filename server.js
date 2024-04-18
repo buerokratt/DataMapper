@@ -17,10 +17,15 @@ import { generatePdf } from "./js/generate/pdf.js";
 import { generatePdfToBase64 } from "./js/generate/pdfToBase64.js";
 import { generateHTMLTable } from "./js/convert/pdf.js";
 
-import * as helpers from "/workspace/app/module/backoffice/lib/helpers.js";
-// import * as helpers from "./lib/helpers.js";
+//import * as helpers from "/workspace/app/module/backoffice/lib/helpers.js";
+import * as helpers from './lib/helpers.js';
+
 
 import { engine } from 'express-handlebars';
+
+import { parseBoolean } from "./js/util/utils.js";
+import conversion from "./controllers/conversion.js";
+import ruuter from "./controllers/ruuter.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
@@ -34,6 +39,8 @@ const app = express();
 
 app.use(express.json());
 app.use("/file-manager", files);
+app.use("/conversion", conversion);
+app.use("/ruuter", ruuter);
 app.use(express.urlencoded({ extended: true }));
 app.use(
   "/encryption",
@@ -104,14 +111,18 @@ app.post("/:project/hbs/*", handled (async (req, res) => {
 }));
 
 app.post("/js/convert/pdf", (req, res) => {
-  const filename = "chat-history";
   const template = fs
     .readFileSync(__dirname + "/views/pdf.handlebars")
     .toString();
   const dom = new JSDOM(template);
+
+  const { messages, csaTitleVisible, csaNameVisible } = req.body;
+
   generateHTMLTable(
-    req.body.data,
-    dom.window.document.getElementById("chatHistoryTable")
+    dom.window.document.getElementById("chatHistoryTable"),
+    messages,
+    parseBoolean(csaTitleVisible),
+    parseBoolean(csaNameVisible)
   );
   generatePdfToBase64(dom.window.document.documentElement.innerHTML, res);
 });
@@ -142,6 +153,8 @@ app.post("/example/post", (req, res) => {
   console.log(`POST endpoint received ${JSON.stringify(req.body)}`);
   res.status(200).json({ message: `received value ${req.body.name}` });
 });
+
+app.get("/status", (req, res) => res.status(200).send("ok"));
 
 app.listen(PORT, () => {
   console.log("Nodejs server running on http://localhost:%s", PORT);
