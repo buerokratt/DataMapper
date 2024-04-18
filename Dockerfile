@@ -12,6 +12,7 @@ COPY js js
 COPY views views
 COPY package.json .
 COPY server.js .
+COPY module module
 
 RUN npm i -g npm@latest
 RUN npm install

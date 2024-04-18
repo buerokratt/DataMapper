@@ -11,22 +11,32 @@ import encryption from "./controllers/encryption.js";
 import decryption from "./controllers/decryption.js";
 import * as path from "path";
 import { fileURLToPath } from "url";
+
 import sendMockEmail from "./js/email/sendMockEmail.js";
 import { generatePdf } from "./js/generate/pdf.js";
 import { generatePdfToBase64 } from "./js/generate/pdfToBase64.js";
 import { generateHTMLTable } from "./js/convert/pdf.js";
-import * as helpers from "./lib/helpers.js";
+
+//import * as helpers from "/workspace/app/module/backoffice/lib/helpers.js";
+import * as helpers from './lib/helpers.js';
+
+
+import { engine } from 'express-handlebars';
+
 import { parseBoolean } from "./js/util/utils.js";
 import conversion from "./controllers/conversion.js";
 import ruuter from "./controllers/ruuter.js";
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
   modulusLength: 2048,
 });
 
+const hbs = create({ helpers });
+
 const PORT = process.env.PORT || 3000;
 const app = express();
-const hbs = create({ helpers });
+
 app.use(express.json());
 app.use("/file-manager", files);
 app.use("/conversion", conversion);
@@ -47,23 +57,58 @@ app.use(
   })
 );
 
-app.engine("handlebars", hbs.engine);
-app.set("view engine", "handlebars");
-app.set("views", "./views");
-app.use("/secrets", secrets);
-app.get("/", (req, res) => {
-  res.render("home", { title: "Home" });
-});
+ const handled = (controller) => async (req, res, next) => {
+  try {
+    await controller(req,res);
+  } catch (error) {
+    return next(error.message);
+  }
+ }
 
-app.post("/hbs/*", (req, res) => {
-  res.render(req.params[0], req.body, function (_, response) {
+const EXTENSION = process.env.EXTENSION || ".handlebars";
+
+app.engine(".handlebars", engine({
+  layoutsDir: path.join(__dirname, 'views/layouts')
+}));
+
+app.engine(".hbs",  hbs.engine);
+
+app.set("views", ["./views", "./module/*/hbs/"]);
+
+app.use("/secrets", secrets);
+
+app.get("/", handled( async (req, res, next) => {
+  res.render(__dirname + "/views/home.handlebars", { title: "Home" });
+}));
+
+app.post("/hbs/*", handled( async (req, res) => {
+  var path = __dirname + "/views/"+req.params[0]+".handlebars";
+  res.render(path, req.body, function (err, response) {
+    if (err) console.log("err:", err);
     if (req.get("type") === "csv") {
       res.json({ response });
     } else if (req.get("type") === "json") {
       res.json(JSON.parse(response));
+    } else {
+      res.send(response);
     }
   });
-});
+}));
+
+app.post("/:project/hbs/*", handled (async (req, res) => {
+  var project = req.params["project"]; 
+  var path = __dirname + "/module/" + project + "/hbs/" + req.params[0] + EXTENSION;
+  res.render(path, req.body, function (err, response) {
+    if (err) console.log("err:", err);
+    if (req.get("type") === "csv") {
+      res.json({ response });
+    } else if (req.get("type") === "json") {
+      res.json(JSON.parse(response));
+    } else {
+      res.send(response);
+    }
+  });
+}));
 
 app.post("/js/convert/pdf", (req, res) => {
   const template = fs
