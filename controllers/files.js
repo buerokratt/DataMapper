@@ -5,10 +5,12 @@ import moveFile from "../js/file/move.js";
 import copyFile from "../js/file/copy.js";
 import deleteFile from "../js/file/delete.js";
 import readFile from "../js/file/read.js";
+import readFullFile from "../js/file/read-file.js";
 import editFile from "../js/file/edit.js";
 import deleteAllThatStartsWith from "../js/file/delete-all-that-starts-with.js";
 import deleteAllThatContains from "../js/file/delete-all-that-contains.js";
 import merge from "../js/file/merge.js";
+import readFileDir from "../js/file/read-file-dir.js";
 
 const router = express.Router();
 
@@ -42,6 +44,11 @@ router.post("/read", async (req, res) => {
   return res.status(result.error ? 400 : 200).json(result);
 });
 
+router.post("/read-file-dir", async (req, res) => {
+  const result = await readFileDir(req.body.file_path);
+  return res.status(result.error ? 400 : 200).json(result);
+});
+
 router.post("/edit", async (req, res) => {
   const result = await editFile(req.body.file_path, req.body.from, req.body.to);
   return res.status(result.error ? 400 : 200).json(result);
@@ -56,7 +63,7 @@ router.post("/delete-all-that-contains", async (req, res) => {
 });
 
 router.post("/read-file", async (req, res) => {
-  await readFile(req.body.file_path, res);
+  await readFullFile(req.body.file_path, res);
 });
 
 router.post("/merge", async (req, res) => {
