@@ -1,5 +1,6 @@
 import fs from "fs";
 import { buildContentFilePath } from "../util/utils.js";
+import mime from "mime-types";
 
 export default async function readFile(file_path, res) {
   const filePath = buildContentFilePath(file_path);
