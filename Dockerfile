@@ -2,7 +2,6 @@
 FROM node:20.12.1-alpine as build
 WORKDIR /app
 EXPOSE 3000
-USER node
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
