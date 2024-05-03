@@ -4,6 +4,8 @@ import fs from "fs";
 import path from "path";
 import * as yaml from "js-yaml";
 
+import { isValidFilePath } from "../util/utils.js";
+
 const router = express.Router();
 
 function mergeYamlFiles(dirPath) {
@@ -49,6 +51,11 @@ function mergeYamlObjects(mergedDocObj, parsedYamlObj) {
 }
 
 router.post("/", (req, res) => {
+  if (!isValidFilePath(req.body.file_path)) {
+    res.status(400).send("Path contains illegal characters");
+    return;
+  }
+
   const mergedYaml = mergeYamlFiles(req.body.file_path);
   res.setHeader("Content-Type", "text/plain");
   res.send(mergedYaml);
