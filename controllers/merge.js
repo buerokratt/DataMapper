@@ -50,7 +50,7 @@ router.post("/replace-array-element", async (req, res) => {
 
   const index = array.indexOf(element);
   if (index === -1) {
-    res.status(400).send(`Array element ${element} is missing`);
+    res.status(400).contentType('text/plain').send(`Array element ${element} is missing`);
     return;
   }
 
