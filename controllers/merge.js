@@ -6,7 +6,7 @@ router.post("/objects", async (req, res) => {
   const { object1, object2 } = req.body;
 
   if (!object1 || !object2) {
-    res.status(400).send("Both objects are required");
+    res.status(400).contentType('text/plain').send("Both objects are required");
     return;
   }
 
@@ -17,7 +17,7 @@ router.post("/remove-key", async (req, res) => {
   const { object, key } = req.body;
 
   if (!object || !key) {
-    res.status(400).send("Both object and key are required");
+    res.status(400).contentType('text/plain').send("Both object and key are required");
     return;
   }
 
@@ -29,7 +29,7 @@ router.post("/remove-array-value", async (req, res) => {
   const { array, value } = req.body;
 
   if (!array || !value) {
-    res.status(400).send("Both array and value are required");
+    res.status(400).contentType('text/plain').send("Both array and value are required");
     return;
   }
 
@@ -44,7 +44,7 @@ router.post("/replace-array-element", async (req, res) => {
   const { array, element, newValue } = req.body;
 
   if (!array || !element || !newValue) {
-    res.status(400).send("Array, element and newValue are required");
+    res.status(400).contentType('text/plain').send("Array, element and newValue are required");
     return;
   }
 
