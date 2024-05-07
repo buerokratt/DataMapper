@@ -30,27 +30,20 @@ router.post("/json_to_yaml_data", (req, res) => {
 
 router.post("/string-replace", (req, res) => {
   let { data, search, replace } = req.body;
-  if (search && typeof search == string 
-    && data && typeof data == string
-    && typeof replace == string ) {
-    if (search === "|") {
-      res.json(data.replace(/(examples:.*?)\|/g, "$1"));
-    } else {
-      res.json(data.replaceAll(search, replace));
-    }
+  if (search === "|") {
+    res.json(data.replace(/(examples:.*?)\|/g, "$1"));
+  } else {
+    res.json(data.replaceAll(search, replace));
   }
 });
 
 router.post("/string-split", (req, res) => {
   let { data, separator } = req.body;
-  if (data && typeof data == string 
-    && typeof separator == string) {
   res.json(
     data.split(separator).filter(function (n) {
       return n;
     })
   );
-}
 });
 
 router.post("/string-to-array", (req, res) => {

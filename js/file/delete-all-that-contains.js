@@ -3,15 +3,7 @@ import fs from "fs";
 import { buildContentFilePath } from "../util/utils.js";
 
 export default async function deleteAllThatContains(currentPath, keyword, res) {
-
-  if (!isValidFilePath(currentPath)) {
-    return {
-      error: true,
-      message: 'File path contains illegal characters',
-    }
-  }
-
-  const folderPath = buildContentFilePath(currentPath);
+  const folderPath = fs.realpathSync(buildContentFilePath(currentPath));
 
   fs.readdir(folderPath, (err, files) => {
     if (err) {

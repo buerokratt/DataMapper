@@ -21,9 +21,6 @@ router.post("/validate-stories-rules", async (req, res) => {
 });
 
 function validateStepsForNoConsecutiveDuplicates(steps) {
-  if (!Array-isArray(steps))
-    return;
-
   for (let i = 1; i < steps.length; i++) {
     const currentStep = steps[i];
     const previousStep = steps[i - 1];

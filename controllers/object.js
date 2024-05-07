@@ -1,11 +1,12 @@
 import express from "express";
+import escapeStringRegexp from "escape-string-regexp";
 
 const router = express.Router();
 
 router.post("/rules/remove-by-intent-name", async (req, res) => {
   const { rulesJson, searchIntentName } = req.body;
   const strRegExPattern = ".*\\b" + searchIntentName + "\\b.*";
-  const regExp = new RegExp(strRegExPattern);
+  const regExp = new RegExp(escapeStringRegexp(strRegExPattern));
 
   const result = rulesJson
     .map((entry) => {

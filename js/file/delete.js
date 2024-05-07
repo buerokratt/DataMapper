@@ -1,26 +1,26 @@
-import fs from 'fs';
-import { buildContentFilePath, isValidFilePath } from '../util/utils.js';
+import fs from "fs";
+import { buildContentFilePath, isValidFilePath } from "../util/utils.js";
 
 export default async function deleteFile(file_path) {
   if (!isValidFilePath(file_path)) {
     return {
       error: true,
-      message: 'File path contains illegal characters',
-    }
+      message: "File path contains illegal characters",
+    };
   }
 
   try {
-    const filepath = buildContentFilePath(file_path)
-    fs.unlinkSync(filepath)
+    const filepath = fs.realpathSync(buildContentFilePath(file_path));
+    fs.unlinkSync(filepath);
 
     return {
       error: false,
-      message: 'File deleted successfully',
-    }
+      message: "File deleted successfully",
+    };
   } catch (err) {
     return {
       error: true,
-      message: 'Unable to delete file',
-    }
+      message: "Unable to delete file",
+    };
   }
 }

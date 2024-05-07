@@ -3,7 +3,7 @@ import { buildContentFilePath } from "../util/utils.js";
 import mime from "mime-types";
 
 export default async function readFile(file_path, res) {
-  const filePath = buildContentFilePath(file_path);
+  const filePath = fs.realpathSync(buildContentFilePath(file_path));
 
   if (!filePath) {
     res.status(400).contentType('text/plain').send("File path is required");

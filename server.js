@@ -16,7 +16,7 @@ import { generatePdf } from "./js/generate/pdf.js";
 import { generatePdfToBase64 } from "./js/generate/pdfToBase64.js";
 import { generateHTMLTable } from "./js/convert/pdf.js";
 import * as helpers from "./lib/helpers.js";
-import { isValidFilePath, isValidFilename, parseBoolean } from "./js/util/utils.js";
+import { parseBoolean } from "./js/util/utils.js";
 import conversion from "./controllers/conversion.js";
 import ruuter from "./controllers/ruuter.js";
 import merge from "./controllers/merge.js";
@@ -68,15 +68,13 @@ app.get("/", (req, res) => {
 });
 
 app.post("/hbs/*", (req, res) => {
-  const path = req.params[0];
-  if (isValidFilePath(path))
-    res.render(path, req.body, function (_, response) {
-      if (req.get("type") === "csv") {
-        res.json({ response });
-      } else if (req.get("type") === "json") {
-        res.json(JSON.parse(response));
-      }
-    });
+  res.render(req.params[0], req.body, function (_, response) {
+    if (req.get("type") === "csv") {
+      res.json({ response });
+    } else if (req.get("type") === "json") {
+      res.json(JSON.parse(response));
+    }
+  });
 });
 
 app.post("/js/convert/pdf", (req, res) => {
@@ -104,20 +102,20 @@ app.post("/js/generate/pdf", (req, res) => {
 });
 
 app.get("/js/*", (req, res) => {
-  if (isValidFilePath(req.path))
-    res.send(fs.readFileSync(__dirname + req.path + ".js").toString());
+  const resolvedPath = fs.realpathSync(path.join(__dirname, req.path + ".js"));
+  res.send(fs.readFileSync(resolvedPath).toString());
 });
 
 // NOTE: This service is only for testing purposes. Needs to be replaced with actual mail service.
- app.post("/js/email/*", (req, res) => {
+app.post("/js/email/*", (req, res) => {
   const { to, subject, text } = req.body;
   try {
     sendMockEmail(to, subject, text);
-    res.text(`email sent to: ${to}`);
+    res.send(`email sent to: ${to}`);
   } catch (err) {
     res.errored(err);
   }
-}); 
+});
 
 app.post("/example/post", (req, res) => {
   console.log(`POST endpoint received ${JSON.stringify(req.body)}`);
