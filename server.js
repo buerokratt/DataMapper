@@ -20,6 +20,7 @@ import { parseBoolean } from "./js/util/utils.js";
 import conversion from "./controllers/conversion.js";
 import ruuter from "./controllers/ruuter.js";
 import merge from "./controllers/merge.js";
+import mergeYaml from "./js/file/mergeYaml.js";
 import cron from "./controllers/cron.js";
 import docker from "./controllers/docker.js";
 import object from "./controllers/object.js";
@@ -31,13 +32,14 @@ const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
 });
 
 const PORT = process.env.PORT || 3000;
-const app = express();
+const app = express().disable("x-powered-by");
 const hbs = create({ helpers });
 app.use(express.json());
 app.use("/file-manager", files);
 app.use("/conversion", conversion);
 app.use("/ruuter", ruuter);
 app.use("/merge", merge);
+app.use("/mergeYaml", mergeYaml);
 app.use("/cron", cron);
 app.use("/docker", docker);
 app.use("/object", object);
