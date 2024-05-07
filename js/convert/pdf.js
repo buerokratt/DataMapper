@@ -1,14 +1,23 @@
-import { extractMessageInfo  } from '../util/pdfs.js';
+import { extractMessageInfo } from "../util/pdfs.js";
 
-export const generateHTMLTable = (chatHistoryTable, messages, csaTitleVisible, csaNameVisible) => {    
+export const generateHTMLTable = (
+  chatHistoryTable,
+  messages,
+  csaTitleVisible,
+  csaNameVisible
+) => {
   let _html = `<tr class="header">
                   <th style="text-align: left">Autor</th>
                   <th style="padding:0 50px; text-align: left">Sõnum</th>
                   <th style="text-align: left">Aeg</th>
               </tr>`;
 
-  for (let i = 0; i < messages.length; i++) {
-    const { author, message, date } = extractMessageInfo(messages[i], csaTitleVisible, csaNameVisible);
+  for (const element of messages) {
+    const { author, message, date } = extractMessageInfo(
+      element,
+      csaTitleVisible,
+      csaNameVisible
+    );
 
     _html += `<tr>
             <td style="border-bottom:1px solid lightgray">${author}</td>
@@ -18,4 +27,4 @@ export const generateHTMLTable = (chatHistoryTable, messages, csaTitleVisible, c
   }
 
   chatHistoryTable.innerHTML = _html;
-}
+};

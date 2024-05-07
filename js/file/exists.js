@@ -1,5 +1,5 @@
 import fs from "fs";
-import { buildContentFilePath, isValidFilePath } from "../util/utils.js";
+import { buildContentFilePath } from "../util/utils.js";
 
 export default async function checkIfFileExists(file_path) {
   if (!file_path) {

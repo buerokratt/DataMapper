@@ -21,30 +21,24 @@ export const extractMessageInfo = (
 };
 
 const extractAuthor = (message, csaTitleVisible, csaNameVisible) => {
-  const role = message.authorRole;
+  const { authorRole, authorFirstName, authorLastName, csaTitle } = message;
 
-  if (role === "end-user") return "Klient";
-  if (role === "buerokratt" || role === "chatbot") return "Bürokratt";
-  if (role === "backoffice-user") {
-    const name = (
-      (message.authorFirstName || "") +
-      " " +
-      (message.authorLastName || "")
-    ).trim();
-    const title = message.csaTitle || message.authorRole;
+  if (authorRole === "end-user") return "Klient";
+  if (authorRole === "buerokratt" || authorRole === "chatbot")
+    return "Bürokratt";
+  if (authorRole === "backoffice-user") {
+    const name = `${authorFirstName || ""} ${authorLastName || ""}`.trim();
+    const title = csaTitle || authorRole;
 
-    if (csaTitleVisible && csaNameVisible) {
-      if (name && title) return `${name} ${title}`.trim();
-      if (title) return title;
-      if (name) return name;
-    } else {
-      if (title) return title;
-      if (name) return name;
-    }
+    const titleAndName = (name + " " + title).trim();
 
-    return "Klienditeenindaja";
+    if (csaTitleVisible && csaNameVisible && titleAndName) return titleAndName;
+    else if (csaTitleVisible && title) return title;
+    else if (csaNameVisible && name) return name;
+    else return "Klienditeenindaja";
   }
-  return role;
+
+  return authorRole;
 };
 
 const tryUnesacpe = (content) => {

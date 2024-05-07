@@ -8,7 +8,7 @@ const sendMockEmail = async (to, subject, text) => {
   const transporter = nodemailer.createTransport({
     host: "smtp.ethereal.email",
     port: 587,
-    secure: false,
+    secure: true,
     auth: {
       user: testAccount.user,
       pass: testAccount.pass,

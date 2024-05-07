@@ -33,12 +33,10 @@ router.get("/sticky", (req, res) => {
       const status = dir.endsWith("/inactive") ? "inactive" : "active";
       if (!services[name]) {
         services[name] = { type, status };
+      } else if (services[name].length > 1) {
+        services[name] = [...services[name], { type, status }];
       } else {
-        if (services[name].length > 1) {
-          services[name] = [...services[name], { type, status }];
-        } else {
-          services[name] = [{ ...services[name] }, { type, status }];
-        }
+        services[name] = [{ ...services[name] }, { type, status }];
       }
     });
 

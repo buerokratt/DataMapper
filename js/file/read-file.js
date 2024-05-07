@@ -15,7 +15,7 @@ export default async function readFile(file_path, res) {
     return;
   }
   const mimeType = mime.lookup(filePath);
-  const name = filePath.split(/(\\|\/)/g).pop();
+  const name = filePath.split(/[\\/]/g).pop();
 
   fs.readFile(filePath, "utf-8", (err, data) => {
     if (err) {
@@ -29,7 +29,7 @@ export default async function readFile(file_path, res) {
     const result = {
       name: name,
       file: file,
-      mimeType: mimeType
+      mimeType: mimeType,
     };
     res.json(result);
   });

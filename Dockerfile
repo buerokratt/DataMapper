@@ -1,5 +1,5 @@
 # Build image
-FROM node:20.12.1-alpine as build
+FROM node:20.12.1-alpine AS build
 WORKDIR /app
 EXPOSE 3000
 
@@ -8,10 +8,10 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 RUN apk add --no-cache chromium
 COPY package*.json .
-RUN npm ci
+RUN npm ci --ignore-scripts
 
 # Run image
-FROM build as run
+FROM build AS run
 USER node
 COPY controllers controllers
 COPY views views
