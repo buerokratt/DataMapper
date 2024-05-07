@@ -4,7 +4,7 @@ import tripleDesEncrypt from "../js/encryption/triple-des.js";
 import base64Encrypt from "../js/encryption/base64.js";
 import rsaEncrypt from "../js/encryption/rsa.js";
 
-var wrapper = function (config) {
+const wrapper = function (config) {
   const router = express.Router();
 
   router.post("/aes", async (req, res) => {

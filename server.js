@@ -111,7 +111,7 @@ app.post("/js/email/*", (req, res) => {
   const { to, subject, text } = req.body;
   try {
     sendMockEmail(to, subject, text);
-    res.send(`email sent to: ${to}`);
+    res.contentType("text/plain").send(`email sent to: ${to}`);
   } catch (err) {
     res.errored(err);
   }

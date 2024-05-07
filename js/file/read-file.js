@@ -6,12 +6,12 @@ export default async function readFile(file_path, res) {
   const filePath = fs.realpathSync(buildContentFilePath(file_path));
 
   if (!filePath) {
-    res.status(400).contentType('text/plain').send("File path is required");
+    res.status(400).contentType("text/plain").send("File path is required");
     return;
   }
 
   if (filePath.includes("..")) {
-    res.status(400).contentType('text/plain').send("Relative paths are not allowed");
+    res.status(400).contentType("text/plain").send("Relative paths are not allowed");
     return;
   }
   const mimeType = mime.lookup(filePath);
@@ -29,7 +29,7 @@ export default async function readFile(file_path, res) {
     const result = {
       name: name,
       file: file,
-      mimeType: mimeType,
+      mimeType: mimeType
     };
     res.json(result);
   });
