@@ -1,6 +1,6 @@
 # Build image
 FROM node:20.12.1-alpine AS build
-WORKDIR /app
+WORKDIR /workspace/app/
 EXPOSE 3000
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true

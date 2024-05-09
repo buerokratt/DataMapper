@@ -26,6 +26,7 @@ import docker from "./controllers/docker.js";
 import object from "./controllers/object.js";
 import validate from "./controllers/validate.js";
 import utils from "./controllers/utils.js";
+import domain from "./controllers/domain.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
   modulusLength: 2048,
@@ -45,6 +46,7 @@ app.use("/docker", docker);
 app.use("/object", object);
 app.use("/validate", validate);
 app.use("/utils", utils);
+app.use("/domain", domain);
 app.use(express.urlencoded({ extended: true }));
 app.use(
   "/encryption",
@@ -74,6 +76,7 @@ app.post("/hbs/*", (req, res) => {
     if (req.get("type") === "csv") {
       res.json({ response });
     } else if (req.get("type") === "json") {
+      console.log(response);
       res.json(JSON.parse(response));
     }
   });
