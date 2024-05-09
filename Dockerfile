@@ -1,5 +1,5 @@
 # Build image
-FROM node:20.12.1-alpine AS build
+FROM node:20.13-alpine AS build
 WORKDIR /app
 EXPOSE 3000
 
