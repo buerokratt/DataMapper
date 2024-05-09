@@ -6,7 +6,10 @@ router.post("/array-elements-length", async (req, res) => {
   const { array, length } = req.body;
 
   if (!array || !length) {
-    res.status(400).contentType("text/plain").send("Both array and length parameters are required");
+    res
+      .status(400)
+      .contentType("text/plain")
+      .send("Both array and length parameters are required");
     return;
   }
 
@@ -21,6 +24,8 @@ router.post("/validate-stories-rules", async (req, res) => {
 });
 
 function validateStepsForNoConsecutiveDuplicates(steps) {
+  if (!Array.isArray(steps)) return false;
+
   for (let i = 1; i < steps.length; i++) {
     const currentStep = steps[i];
     const previousStep = steps[i - 1];

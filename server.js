@@ -105,7 +105,7 @@ app.post("/js/generate/pdf", (req, res) => {
 
 app.get("/js/*", (req, res) => {
   const resolvedPath = fs.realpathSync(path.join(__dirname, req.path + ".js"));
-  res.send(fs.readFileSync(resolvedPath).toString());
+  res.contentType("text/plain").send(fs.readFileSync(resolvedPath).toString());
 });
 
 // NOTE: This service is only for testing purposes. Needs to be replaced with actual mail service.

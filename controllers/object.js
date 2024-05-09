@@ -5,6 +5,13 @@ const router = express.Router();
 
 router.post("/rules/remove-by-intent-name", async (req, res) => {
   const { rulesJson, searchIntentName } = req.body;
+
+  if (!/^[0-9a-zA-Z-._/]+$/.test(searchIntentName)) {
+    return res
+      .status(400)
+      .send({ error: "Search intent name contains illegal characters" });
+  }
+
   const strRegExPattern = ".*\\b" + searchIntentName + "\\b.*";
   const regExp = new RegExp(escapeStringRegexp(strRegExPattern));
 

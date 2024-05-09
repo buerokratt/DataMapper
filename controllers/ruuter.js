@@ -58,7 +58,7 @@ router.post("/sticky/steps", (req, res) => {
   try {
     const ymlFile = readFile(file_path);
     const jsonFile = parseYmlToJson(ymlFile);
-    return res.status(200).send(jsonFile);
+    return res.status(200).json(jsonFile);
   } catch (e) {
     console.log(e);
     return res.status(500).send({ message: "Can't read the file" });
