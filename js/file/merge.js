@@ -7,6 +7,7 @@ export default async function merge(body) {
     return {
       error: true,
       message: "Both arrays are required",
+      array: [],
     };
   }
 

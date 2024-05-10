@@ -16,7 +16,7 @@ const router = express.Router();
 
 router.post("/exists", async (req, res) => {
   const result = await checkIfFileExists(req.body.file_path, req.body.content);
-  return res.status(result.error ? 400 : 200).json(result);
+  return res.status(200).json(result);
 });
 
 router.post("/create", async (req, res) => {

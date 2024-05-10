@@ -17,7 +17,7 @@ export default async function createFile(file_path, content) {
   }
 
   try {
-    const filepath = fs.realpathSync(buildContentFilePath(file_path));
+    const filepath = buildContentFilePath(file_path);
     fs.writeFileSync(filepath, content);
 
     return {

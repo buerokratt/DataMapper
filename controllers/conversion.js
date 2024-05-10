@@ -150,7 +150,7 @@ router.post("/json-to-yaml-stories", (req, res) => {
     return res.status(400).json({ error: "Invalid request body" });
   }
 
-  const yamlString = yaml.stringify(result, {
+  const yamlString = stringify(result, {
     customTags: [
       {
         tag: "tag:yaml.org,2002:seq",
