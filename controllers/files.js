@@ -15,8 +15,8 @@ import readFileDir from "../js/file/read-file-dir.js";
 const router = express.Router();
 
 router.post("/exists", async (req, res) => {
-  const result = await checkIfFileExists(req.body.file_path, req.body.content);
-  return res.status(200).json(result);
+  const result = await checkIfFileExists(req.body.file_path);
+  return res.json(result);
 });
 
 router.post("/create", async (req, res) => {
