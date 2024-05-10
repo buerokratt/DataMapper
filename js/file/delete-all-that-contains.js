@@ -3,7 +3,7 @@ import fs from "fs";
 import { buildContentFilePath } from "../util/utils.js";
 
 export default async function deleteAllThatContains(currentPath, keyword, res) {
-  const folderPath = fs.realpathSync(buildContentFilePath(currentPath));
+  const folderPath = buildContentFilePath(currentPath);
 
   fs.readdir(folderPath, (err, files) => {
     if (err) {

@@ -26,7 +26,10 @@ export const mapSecretToJson = (secrets) => {
 };
 
 export const buildContentFilePath = (fileName) => {
-  return path.join(process.env.CONTENT_FOLDER || "data", fileName);
+  const normalizedPath = path
+    .normalize(fileName)
+    .replace(/^(\.\.(\/|\\|$))+/, "");
+  return path.join(process.env.CONTENT_FOLDER || "data", normalizedPath);
 };
 
 export const isValidFilename = (fileName) => {

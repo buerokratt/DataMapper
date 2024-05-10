@@ -11,8 +11,8 @@ export default async function copyFile(current_path, new_path) {
   }
 
   try {
-    const currentPath = fs.realpathSync(buildContentFilePath(current_path));
-    const newPath = fs.realpathSync(buildContentFilePath(new_path));
+    const currentPath = buildContentFilePath(current_path);
+    const newPath = buildContentFilePath(new_path);
 
     fs.mkdirSync(path.dirname(newPath), { recursive: true });
     fs.copyFileSync(currentPath, newPath);

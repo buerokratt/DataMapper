@@ -10,7 +10,7 @@ export default async function deleteFile(file_path) {
   }
 
   try {
-    const filepath = fs.realpathSync(buildContentFilePath(file_path));
+    const filepath = buildContentFilePath(file_path);
     fs.unlinkSync(filepath);
 
     return {

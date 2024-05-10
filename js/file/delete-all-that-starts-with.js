@@ -7,7 +7,7 @@ export default async function deleteAllThatStartsWith(
   keyword,
   res
 ) {
-  const folderPath = fs.realpathSync(buildContentFilePath(currentPath));
+  const folderPath = buildContentFilePath(currentPath);
 
   fs.readdir(folderPath, (err, files) => {
     if (err) {

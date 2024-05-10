@@ -17,7 +17,7 @@ export default async function checkIfFileExists(file_path) {
   }
 
   try {
-    const current_path = fs.realpathSync(buildContentFilePath(file_path));
+    const current_path = buildContentFilePath(file_path);
     fs.accessSync(current_path, fs.constants.F_OK);
     return {
       error: false,

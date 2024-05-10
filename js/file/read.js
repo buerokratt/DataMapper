@@ -10,7 +10,7 @@ export default async function readFile(file_path) {
   }
 
   try {
-    const filepath = fs.realpathSync(buildContentFilePath(file_path));
+    const filepath = buildContentFilePath(file_path);
 
     const data = fs.readFileSync(filepath, { encoding: "utf8", flag: "r" });
 

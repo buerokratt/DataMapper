@@ -17,11 +17,14 @@ function mergeYamlFiles(dirPath) {
 }
 
 function traverseFolder(currentPath, mergedDocuments) {
-  const resolvedPath = fs.realpathSync(currentPath);
-  const items = fs.readdirSync(resolvedPath);
+  const normalizedPath = path
+    .normalize(currentPath)
+    .replace(/^(\.\.(\/|\\|$))+/, "");
+
+  const items = fs.readdirSync(normalizedPath);
 
   for (const item of items) {
-    const itemPath = path.join(resolvedPath, item);
+    const itemPath = path.join(normalizedPath, item);
 
     if (fs.statSync(itemPath).isFile()) {
       if ([".yaml", ".yml"].includes(path.extname(itemPath).toLowerCase())) {
