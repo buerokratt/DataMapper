@@ -21,7 +21,7 @@ router.post("/domainUpdateExistingResponse", (req, res) => {
     }
   });
 
-  return res.status(200).send(json);
+  return res.send(json);
 });
 
 export default router;
