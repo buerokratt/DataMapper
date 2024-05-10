@@ -76,7 +76,6 @@ app.post("/hbs/*", (req, res) => {
     if (req.get("type") === "csv") {
       res.json({ response });
     } else if (req.get("type") === "json") {
-      console.log(response);
       res.json(JSON.parse(response));
     }
   });
