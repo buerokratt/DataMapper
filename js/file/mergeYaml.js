@@ -3,10 +3,19 @@ import express from "express";
 import fs from "fs";
 import path from "path";
 import * as yaml from "js-yaml";
+import setRateLimit from "express-rate-limit";
 
 import { isValidFilePath } from "../util/utils.js";
 
 const router = express.Router();
+
+const rateLimit = setRateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  message: "Too many requests",
+  headers: true,
+  statusCode: 429,
+});
 
 function mergeYamlFiles(dirPath) {
   const mergedDocuments = { version: "3.0" };
@@ -54,7 +63,7 @@ function mergeYamlObjects(mergedDocObj, parsedYamlObj) {
   }
 }
 
-router.post("/", (req, res) => {
+router.post("/", rateLimit, (req, res) => {
   if (!isValidFilePath(req.body.file_path)) {
     res.status(400).send("Path contains illegal characters");
     return;

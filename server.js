@@ -1,5 +1,6 @@
 import express from "express";
 import { create } from "express-handlebars";
+import setRateLimit from "express-rate-limit";
 import jsdom from "jsdom";
 const { JSDOM } = jsdom;
 import secrets from "./controllers/secrets.js";
@@ -36,6 +37,13 @@ const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
 const PORT = process.env.PORT || 3000;
 const app = express().disable("x-powered-by");
 const hbs = create({ helpers });
+const rateLimit = setRateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  message: "Too many requests",
+  headers: true,
+  statusCode: 429,
+});
 app.use(express.json());
 app.use("/file-manager", files);
 app.use("/conversion", conversion);
@@ -69,11 +77,11 @@ app.engine("handlebars", hbs.engine);
 app.set("view engine", "handlebars");
 app.set("views", "./views");
 app.use("/secrets", secrets);
-app.get("/", (req, res) => {
+app.get("/", rateLimit, (req, res) => {
   res.render("home", { title: "Home" });
 });
 
-app.post("/hbs/*", (req, res) => {
+app.post("/hbs/*", rateLimit, (req, res) => {
   res.render(req.params[0], req.body, function (_, response) {
     if (req.get("type") === "csv") {
       res.json({ response });
@@ -83,7 +91,7 @@ app.post("/hbs/*", (req, res) => {
   });
 });
 
-app.post("/js/convert/pdf", (req, res) => {
+app.post("/js/convert/pdf", rateLimit, (req, res) => {
   const template = fs
     .readFileSync(__dirname + "/views/pdf.handlebars")
     .toString();
@@ -107,8 +115,11 @@ app.post("/js/generate/pdf", (req, res) => {
   generatePdf(filename, template, res);
 });
 
-app.get("/js/*", (req, res) => {
-  const resolvedPath = fs.realpathSync(path.join(__dirname, req.path + ".js"));
+app.get("/js/*", rateLimit, (req, res) => {
+  const normalizedPath = path
+    .normalize(req.path)
+    .replace(/^(\.\.(\/|\\|$))+/, "");
+  const resolvedPath = path.join(__dirname, normalizedPath + ".js");
   res.contentType("text/plain").send(fs.readFileSync(resolvedPath).toString());
 });
 

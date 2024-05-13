@@ -1,20 +1,29 @@
 import express from "express";
+import { body, matchedData, validationResult } from "express-validator";
 
 const router = express.Router();
 
-router.post("/array-elements-length", async (req, res) => {
-  const { array, length } = req.body;
+router.post(
+  "/array-elements-length",
+  [
+    body("array")
+      .isArray()
+      .withMessage("array is required and must be an array"),
+    body("length")
+      .isNumeric()
+      .withMessage("length is required and must be a number"),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-  if (!array || !length) {
-    res
-      .status(400)
-      .contentType("text/plain")
-      .send("Both array and length parameters are required");
-    return;
+    const { array, length } = matchedData(req);
+
+    res.json(array.every((value) => value.length <= length));
   }
-
-  res.json(array.every((value) => value.length <= length));
-});
+);
 
 router.post("/validate-stories-rules", async (req, res) => {
   const steps =

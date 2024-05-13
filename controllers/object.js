@@ -1,29 +1,45 @@
 import express from "express";
-import escapeStringRegexp from "escape-string-regexp";
+import { body, matchedData, validationResult } from "express-validator";
 
 const router = express.Router();
 
-router.post("/rules/remove-by-intent-name", async (req, res) => {
-  const { rulesJson, searchIntentName } = req.body;
+router.post(
+  "/rules/remove-by-intent-name",
+  [
+    body("rulesJson")
+      .isArray()
+      .withMessage("rulesJson is required and must be an array"),
+    body("searchIntentName")
+      .isString()
+      .withMessage("searchIntentName is required and must be a string"),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-  if (!/^[0-9a-zA-Z-._/]+$/.test(searchIntentName)) {
-    return res
-      .status(400)
-      .send({ error: "Search intent name contains illegal characters" });
+    const { rulesJson, searchIntentName } = matchedData(req);
+
+    if (!/^[0-9a-zA-Z-._/]+$/.test(searchIntentName)) {
+      return res
+        .status(400)
+        .send({ error: "Search intent name contains illegal characters" });
+    }
+
+    const strRegExPattern = ".*\\b" + searchIntentName + "\\b.*";
+    const regExp = new RegExp(strRegExPattern);
+
+    const result = rulesJson
+      .map((entry) => {
+        const containsSearchTerm = regExp.test(JSON.stringify(entry));
+        if (!containsSearchTerm) return entry;
+      })
+      .filter((value) => value);
+
+    return res.status(200).send({ result });
   }
-
-  const strRegExPattern = ".*\\b" + searchIntentName + "\\b.*";
-  const regExp = new RegExp(escapeStringRegexp(strRegExPattern));
-
-  const result = rulesJson
-    .map((entry) => {
-      const containsSearchTerm = regExp.test(JSON.stringify(entry));
-      if (!containsSearchTerm) return entry;
-    })
-    .filter((value) => value);
-
-  return res.status(200).send({ result });
-});
+);
 
 router.post("/replace/key-value-in-obj", async (req, res) => {
   let { object, oldKey, newKey, newValue } = req.body;
@@ -40,16 +56,35 @@ router.post("/replace/key-value-in-obj", async (req, res) => {
   res.json(result);
 });
 
-router.post("/array/replace-next-element", async (req, res) => {
-  const { array, element, newInput } = req.body;
+router.post(
+  "/array/replace-next-element",
+  [
+    body("array")
+      .isArray()
+      .withMessage("array is required and must be an array"),
+    body("element")
+      .isString()
+      .withMessage("element is required and must be a string"),
+    body("newInput")
+      .isNumeric()
+      .withMessage("newInput is required and must be a number"),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-  const index = array.indexOf(element);
+    const { array, element, newInput } = matchedData(req);
 
-  if (index !== -1 && index < array.length - 1) {
-    array[index + 1] = newInput.toString();
+    const index = array.indexOf(element);
+
+    if (index !== -1 && index < array.length - 1) {
+      array[index + 1] = newInput.toString();
+    }
+
+    return res.status(200).send({ array });
   }
-
-  return res.status(200).send({ array });
-});
+);
 
 export default router;
