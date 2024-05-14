@@ -10,7 +10,7 @@ router.post("/domainUpdateExistingResponse", (req, res) => {
     });
   }
 
-  Object.entries(json).map(([key, _]) => {
+  Object.entries(json).forEach(([key, _]) => {
     if (key.includes(searchKey)) {
       json[newKey] = [
         {

@@ -1,5 +1,5 @@
 import fs from "fs";
-import { buildContentFilePath, isValidFilePath } from "../util/utils.js";
+import { isValidFilePath } from "../util/utils.js";
 
 export default async function createFile(file_path, content) {
   if (!isValidFilePath(file_path)) {
@@ -17,8 +17,7 @@ export default async function createFile(file_path, content) {
   }
 
   try {
-    const filepath = buildContentFilePath(file_path);
-    fs.writeFileSync(filepath, content);
+    fs.writeFileSync(file_path, content);
 
     return {
       error: false,

@@ -1,4 +1,6 @@
 import express from "express";
+import path from "path";
+
 import checkIfFileExists from "../js/file/exists.js";
 import createFile from "../js/file/create.js";
 import moveFile from "../js/file/move.js";
@@ -11,6 +13,7 @@ import deleteAllThatStartsWith from "../js/file/delete-all-that-starts-with.js";
 import deleteAllThatContains from "../js/file/delete-all-that-contains.js";
 import merge from "../js/file/merge.js";
 import readFileDir from "../js/file/read-file-dir.js";
+import { buildContentFilePath } from "../js/util/utils.js";
 
 const router = express.Router();
 
@@ -20,32 +23,40 @@ router.post("/exists", async (req, res) => {
 });
 
 router.post("/create", async (req, res) => {
-  const result = await createFile(req.body.file_path, req.body.content);
+  const filepath = buildContentFilePath(req.body.file_path);
+  const result = await createFile(filepath, req.body.content);
   return res.status(result.error ? 400 : 200).json(result);
 });
 
 router.post("/move", async (req, res) => {
-  const result = await moveFile(req.body.file_path, req.body.new_path);
+  const filepath = buildContentFilePath(req.body.file_path);
+  const newPath = buildContentFilePath(req.body.new_path);
+  const result = await moveFile(filepath, newPath);
   return res.status(result.error ? 400 : 200).json(result);
 });
 
 router.post("/copy", async (req, res) => {
-  const result = await copyFile(req.body.file_path, req.body.new_path);
+  const filepath = buildContentFilePath(req.body.file_path);
+  const newPath = buildContentFilePath(req.body.new_path);
+  const result = await copyFile(filepath, newPath);
   return res.status(result.error ? 400 : 200).json(result);
 });
 
 router.post("/delete", async (req, res) => {
-  const result = await deleteFile(req.body.file_path);
+  const filepath = buildContentFilePath(req.body.file_path);
+  const result = await deleteFile(filepath);
   return res.status(result.error ? 400 : 200).json(result);
 });
 
 router.post("/read", async (req, res) => {
-  const result = await readFile(req.body.file_path);
+  const filepath = buildContentFilePath(req.body.file_path);
+  const result = await readFile(filepath);
   return res.status(result.error ? 400 : 200).json(result);
 });
 
 router.post("/read-file-dir", async (req, res) => {
-  const result = await readFileDir(req.body.file_path);
+  const filepath = buildContentFilePath(req.body.file_path);
+  const result = await readFileDir(filepath);
   return res.status(result.error ? 400 : 200).json(result);
 });
 
@@ -55,15 +66,30 @@ router.post("/edit", async (req, res) => {
 });
 
 router.post("/delete-all-that-starts-with", async (req, res) => {
-  await deleteAllThatStartsWith(req.body.path, req.body.keyword, res);
+  const filepath = buildContentFilePath(req.body.path);
+
+  // TODO: this sanitization is done to resolve snyk errors,
+  // this is actually not needed here according to the implementation logic
+  const normalizedKeyWord = path
+    .normalize(req.body.keyword)
+    .replace(/^(\.\.(\/|\\|$))+/, "");
+  await deleteAllThatStartsWith(filepath, normalizedKeyWord, res);
 });
 
 router.post("/delete-all-that-contains", async (req, res) => {
-  await deleteAllThatContains(req.body.path, req.body.keyword, res);
+  const filepath = buildContentFilePath(req.body.path);
+
+  // TODO: this sanitization is done to resolve snyk errors,
+  // this is actually not needed here according to the implementation logic
+  const normalizedKeyWord = path
+    .normalize(req.body.keyword)
+    .replace(/^(\.\.(\/|\\|$))+/, "");
+  await deleteAllThatContains(filepath, normalizedKeyWord, res);
 });
 
 router.post("/read-file", async (req, res) => {
-  await readFullFile(req.body.file_path, res);
+  const filepath = buildContentFilePath(req.body.file_path);
+  await readFullFile(filepath, res);
 });
 
 router.post("/merge", async (req, res) => {
@@ -72,7 +98,8 @@ router.post("/merge", async (req, res) => {
 });
 
 router.post("/delete-intent", async (req, res) => {
-  const result = await deleteFile(req.body.file_path);
+  const filepath = buildContentFilePath(req.body.file_path);
+  const result = await deleteFile(filepath);
   return res.status(result.error ? 400 : 200).json(result);
 });
 

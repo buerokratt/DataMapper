@@ -8,12 +8,7 @@ export default async function getSecretsWithPriority(priority) {
     Object.keys(secrets).forEach((k) => {
       if (typeof secrets[k] === "object") {
         if (!Object.keys(result).includes(k)) result[k] = {};
-        return mergeSecrets(
-          secrets[k],
-          result[k],
-          isProdSecrets,
-          isProdPriority
-        );
+        mergeSecrets(secrets[k], result[k], isProdSecrets, isProdPriority);
       }
       if (
         !Object.keys(result).includes(k) ||

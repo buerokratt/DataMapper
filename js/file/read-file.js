@@ -1,33 +1,30 @@
 import fs from "fs";
-import { buildContentFilePath } from "../util/utils.js";
 import mime from "mime-types";
 
 export default async function readFile(file_path, res) {
-  const filePath = buildContentFilePath(file_path);
-
-  if (!filePath) {
+  if (!file_path) {
     res.status(400).contentType("text/plain").send("File path is required");
     return;
   }
 
-  if (filePath.includes("..")) {
+  if (file_path.includes("..")) {
     res
       .status(400)
       .contentType("text/plain")
       .send("Relative paths are not allowed");
     return;
   }
-  const mimeType = mime.lookup(filePath);
-  const name = filePath.split(/[\\/]/g).pop();
+  const mimeType = mime.lookup(file_path);
+  const name = file_path.split(/[\\/]/g).pop();
 
-  fs.readFile(filePath, "utf-8", (err, data) => {
+  fs.readFile(file_path, "utf8", (err, data) => {
     if (err) {
       res.status(404).send("File not found");
       return;
     }
     const file = Buffer.from(data).toString("base64");
 
-    res.setHeader("Content-Type", "application/json");
+    res.setHeader("Content-Type", "application/json; charset=utf8");
 
     const result = {
       name: name,

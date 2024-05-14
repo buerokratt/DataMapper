@@ -56,7 +56,11 @@ router.post("/sticky/steps", (req, res) => {
   }
 
   try {
-    const ymlFile = readFile(file_path);
+    const normalizedPath = path
+      .normalize(file_path)
+      .replace(/^(\.\.(\/|\\|$))+/, "");
+
+    const ymlFile = readFile(normalizedPath);
     const jsonFile = parseYmlToJson(ymlFile);
     return res.status(200).json(jsonFile);
   } catch (e) {

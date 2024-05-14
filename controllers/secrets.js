@@ -6,14 +6,14 @@ const router = express.Router();
 
 router.post("/get-all", async (req, res) => {
   const secrets = await getAllSecrets();
-  res.setHeader("Content-Type", "application/json");
+  res.setHeader("Content-Type", "application/json; charset=utf8");
   return res.status(200).json({ ...secrets });
 });
 
 router.post("/get-with-priority", async (req, res) => {
   const priority = req.query.priority;
   const result = await getSecretsWithPriority(priority);
-  res.setHeader("Content-Type", "application/json");
+  res.setHeader("Content-Type", "application/json; charset=utf8");
   return res.status(200).json({ ...result });
 });
 

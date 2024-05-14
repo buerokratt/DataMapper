@@ -1,6 +1,7 @@
 import express from "express";
 import { create } from "express-handlebars";
 import setRateLimit from "express-rate-limit";
+import { body, matchedData, validationResult } from "express-validator";
 import jsdom from "jsdom";
 const { JSDOM } = jsdom;
 import secrets from "./controllers/secrets.js";
@@ -82,7 +83,11 @@ app.get("/", rateLimit, (req, res) => {
 });
 
 app.post("/hbs/*", rateLimit, (req, res) => {
-  res.render(req.params[0], req.body, function (_, response) {
+  const normalizedParams = path
+    .normalize(req.params[0])
+    .replace(/^(\.\.(\/|\\|$))+/, "");
+
+  res.render(normalizedParams, req.body, function (_, response) {
     if (req.get("type") === "csv") {
       res.json({ response });
     } else if (req.get("type") === "json") {
@@ -91,22 +96,42 @@ app.post("/hbs/*", rateLimit, (req, res) => {
   });
 });
 
-app.post("/js/convert/pdf", rateLimit, (req, res) => {
-  const template = fs
-    .readFileSync(__dirname + "/views/pdf.handlebars")
-    .toString();
-  const dom = new JSDOM(template);
+app.post(
+  "/js/convert/pdf",
+  [
+    body("messages")
+      .isArray()
+      .withMessage("messages is required and must be an array"),
+    body("csaTitleVisible")
+      .isString()
+      .withMessage("csaTitleVisible is required and must be a string"),
+    body("csaNameVisible")
+      .isString()
+      .withMessage("csaNameVisible is required and must be a string"),
+  ],
+  rateLimit,
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-  const { messages, csaTitleVisible, csaNameVisible } = req.body;
+    const { messages, csaTitleVisible, csaNameVisible } = matchedData(req);
 
-  generateHTMLTable(
-    dom.window.document.getElementById("chatHistoryTable"),
-    messages,
-    parseBoolean(csaTitleVisible),
-    parseBoolean(csaNameVisible)
-  );
-  generatePdfToBase64(dom.window.document.documentElement.innerHTML, res);
-});
+    const template = fs
+      .readFileSync(__dirname + "/views/pdf.handlebars")
+      .toString();
+    const dom = new JSDOM(template);
+
+    generateHTMLTable(
+      dom.window.document.getElementById("chatHistoryTable"),
+      messages,
+      parseBoolean(csaTitleVisible),
+      parseBoolean(csaNameVisible)
+    );
+    generatePdfToBase64(dom.window.document.documentElement.innerHTML, res);
+  }
+);
 
 app.post("/js/generate/pdf", (req, res) => {
   const filename = req.body.filename;

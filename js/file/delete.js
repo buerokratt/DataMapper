@@ -1,5 +1,5 @@
 import fs from "fs";
-import { buildContentFilePath, isValidFilePath } from "../util/utils.js";
+import { isValidFilePath } from "../util/utils.js";
 
 export default async function deleteFile(file_path) {
   if (!isValidFilePath(file_path)) {
@@ -10,8 +10,7 @@ export default async function deleteFile(file_path) {
   }
 
   try {
-    const filepath = buildContentFilePath(file_path);
-    fs.unlinkSync(filepath);
+    fs.unlinkSync(file_path);
 
     return {
       error: false,

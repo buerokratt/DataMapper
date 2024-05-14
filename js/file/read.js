@@ -1,5 +1,5 @@
 import fs from "fs";
-import { buildContentFilePath, isValidFilePath } from "../util/utils.js";
+import { isValidFilePath } from "../util/utils.js";
 
 export default async function readFile(file_path) {
   if (!isValidFilePath(file_path)) {
@@ -10,9 +10,7 @@ export default async function readFile(file_path) {
   }
 
   try {
-    const filepath = buildContentFilePath(file_path);
-
-    const data = fs.readFileSync(filepath, { encoding: "utf8", flag: "r" });
+    const data = fs.readFileSync(file_path, { encoding: "utf8", flag: "r" });
 
     return {
       error: false,

@@ -1,15 +1,12 @@
 import path from "path";
 import fs from "fs";
-import { buildContentFilePath } from "../util/utils.js";
 
 export default async function deleteAllThatStartsWith(
   currentPath,
   keyword,
   res
 ) {
-  const folderPath = buildContentFilePath(currentPath);
-
-  fs.readdir(folderPath, (err, files) => {
+  fs.readdir(currentPath, (err, files) => {
     if (err) {
       res.status(500).json({ message: "Unable to read directory" });
       return;
@@ -25,7 +22,7 @@ export default async function deleteAllThatStartsWith(
     }
 
     filesToDelete.forEach((file) => {
-      fs.unlink(path.join(folderPath, file), (err) => {
+      fs.unlink(path.join(currentPath, file), (err) => {
         if (err) {
           console.error(`Unable to delete file: ${file}`);
         } else {
