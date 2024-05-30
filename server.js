@@ -1,5 +1,5 @@
 import express from "express";
-import { create } from "express-handlebars";
+import { create, engine } from "express-handlebars";
 import setRateLimit from "express-rate-limit";
 import { body, matchedData, validationResult } from "express-validator";
 import jsdom from "jsdom";
@@ -13,6 +13,7 @@ import encryption from "./controllers/encryption.js";
 import decryption from "./controllers/decryption.js";
 import * as path from "path";
 import { fileURLToPath } from "url";
+
 import sendMockEmail from "./js/email/sendMockEmail.js";
 import { generatePdf } from "./js/generate/pdf.js";
 import { generatePdfToBase64 } from "./js/generate/pdfToBase64.js";
@@ -30,14 +31,16 @@ import validate from "./controllers/validate.js";
 import utils from "./controllers/utils.js";
 import domain from "./controllers/domain.js";
 import forms from "./controllers/forms.js";
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
   modulusLength: 2048,
 });
 
+const hbs = create({ helpers });
+
 const PORT = process.env.PORT || 3000;
 const app = express().disable("x-powered-by");
-const hbs = create({ helpers });
 const rateLimit = setRateLimit({
   windowMs: 60 * 1000,
   max: 30,
@@ -45,6 +48,7 @@ const rateLimit = setRateLimit({
   headers: true,
   statusCode: 429,
 });
+
 app.use(express.json());
 app.use("/file-manager", files);
 app.use("/conversion", conversion);
@@ -74,27 +78,74 @@ app.use(
   })
 );
 
-app.engine("handlebars", hbs.engine);
-app.set("view engine", "handlebars");
-app.set("views", "./views");
+const handled = (controller) => async (req, res, next) => {
+  try {
+    await controller(req, res);
+  } catch (error) {
+    return next(error.message);
+  }
+};
+
+const EXTENSION = process.env.EXTENSION || ".handlebars";
+
+app.engine(
+  ".handlebars",
+  engine({
+    layoutsDir: path.join(__dirname, "views/layouts"),
+  })
+);
+
+app.engine(".hbs", hbs.engine);
+
+app.set("views", ["./views", "./module/*/hbs/"]);
+
 app.use("/secrets", secrets);
-app.get("/", rateLimit, (req, res) => {
-  res.render("home", { title: "Home" });
-});
 
-app.post("/hbs/*", rateLimit, (req, res) => {
-  const normalizedParams = path
-    .normalize(req.params[0])
-    .replace(/^(\.\.(\/|\\|$))+/, "");
+app.get(
+  "/",
+  handled(async (req, res, next) => {
+    res.render(__dirname + "/views/home.handlebars", { title: "Home" });
+  })
+);
 
-  res.render(normalizedParams, req.body, function (_, response) {
+const handleRender = (req, res, templatePath) => {
+  res.render(templatePath, req.body, (err, response) => {
+    if (err) console.log("err:", err);
     if (req.get("type") === "csv") {
       res.json({ response });
     } else if (req.get("type") === "json") {
       res.json(JSON.parse(response));
+    } else {
+      res.send(response);
     }
   });
-});
+};
+
+app.post(
+  "/hbs/*",
+  rateLimit,
+  handled(async (req, res) => {
+    const normalizedParams = path
+      .normalize(req.params[0])
+      .replace(/^(\.\.(\/|\\|$))+/, "");
+    const templatePath =
+      __dirname + "/views/" + normalizedParams + ".handlebars";
+    handleRender(req, res, templatePath);
+  })
+);
+
+app.post(
+  "/:project/hbs/*",
+  handled(async (req, res) => {
+    const project = req.params["project"];
+    const normalizedParams = path
+      .normalize(req.params[0])
+      .replace(/^(\.\.(\/|\\|$))+/, "");
+    const templatePath =
+      __dirname + "/module/" + project + "/hbs/" + normalizedParams + EXTENSION;
+    handleRender(req, res, templatePath);
+  })
+);
 
 app.post(
   "/js/convert/pdf",
