@@ -130,6 +130,7 @@ app.post(
       .replace(/^(\.\.(\/|\\|$))+/, "");
     const templatePath =
       __dirname + "/views/" + normalizedParams + ".handlebars";
+    console.log(`loading: ${templatePath}`)
     handleRender(req, res, templatePath);
   })
 );
@@ -143,6 +144,7 @@ app.post(
       .replace(/^(\.\.(\/|\\|$))+/, "");
     const templatePath =
       __dirname + "/module/" + project + "/hbs/" + normalizedParams + EXTENSION;
+    console.log(`loading: ${templatePath}`)
     handleRender(req, res, templatePath);
   })
 );
