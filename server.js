@@ -109,7 +109,7 @@ app.get(
 );
 
 const handleRender = (req, res, templatePath) => {
-  res.render(templatePath, { body: req.body, helpers }, (err, response) => {
+  res.render(templatePath, { ...req.body, helpers }, (err, response) => {
     if (err) console.log("err:", err);
     if (req.get("type") === "csv") {
       res.json({ response });
