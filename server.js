@@ -211,6 +211,7 @@ app.post("/js/email/*", (req, res) => {
 });
 
 app.post("/example/post", (req, res) => {
+  console.log(`POST endpoint received ${JSON.stringify(req.body)}`);
   res.status(200).json({ message: `received value ${req.body.name}` });
 });
 
