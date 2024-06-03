@@ -130,8 +130,6 @@ app.post(
       .replace(/^(\.\.(\/|\\|$))+/, "");
     const templatePath =
       __dirname + "/views/" + normalizedParams + ".handlebars";
-    console.log(`url: ${req.originalUrl}`)
-    console.log(`loading: ${templatePath}`)
     handleRender(req, res, templatePath);
   })
 );
@@ -145,8 +143,6 @@ app.post(
       .replace(/^(\.\.(\/|\\|$))+/, "");
     const templatePath =
       __dirname + "/module/" + project + "/hbs/" + normalizedParams + EXTENSION;
-    console.log(`url: ${req.originalUrl}`)
-    console.log(`loading: ${templatePath}`)
     handleRender(req, res, templatePath);
   })
 );
@@ -215,7 +211,6 @@ app.post("/js/email/*", (req, res) => {
 });
 
 app.post("/example/post", (req, res) => {
-  console.log(`POST endpoint received ${JSON.stringify(req.body)}`);
   res.status(200).json({ message: `received value ${req.body.name}` });
 });
 
