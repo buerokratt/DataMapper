@@ -8,6 +8,7 @@ import secrets from "./controllers/secrets.js";
 import fs from "fs";
 import files from "./controllers/files.js";
 import crypto from "crypto";
+import bodyParser from "body-parser";
 
 import encryption from "./controllers/encryption.js";
 import decryption from "./controllers/decryption.js";
@@ -31,6 +32,7 @@ import validate from "./controllers/validate.js";
 import utils from "./controllers/utils.js";
 import domain from "./controllers/domain.js";
 import forms from "./controllers/forms.js";
+import { requestLoggerMiddleware } from "./lib/requestLoggerMiddleware.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
@@ -48,6 +50,10 @@ const rateLimit = setRateLimit({
   headers: true,
   statusCode: 429,
 });
+
+app.use(bodyParser.json());
+app.use(bodyParser.text());
+app.use(requestLoggerMiddleware({ logger: console.log }));
 
 app.use(express.json());
 app.use("/file-manager", files);
