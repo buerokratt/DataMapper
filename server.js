@@ -120,7 +120,13 @@ const handleRender = (req, res, templatePath) => {
     if (req.get("type") === "csv") {
       res.json({ response });
     } else if (req.get("type") === "json") {
-      res.json(JSON.parse(response));
+      if (response === undefined) {
+        res.json({
+          error: `There was an error executing ${templatePath}`,
+        });
+      } else {
+        res.json(JSON.parse(response));
+      }
     } else {
       res.send(response);
     }
