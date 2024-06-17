@@ -20,7 +20,7 @@ router.post("/yaml_to_json", multer().array("file"), (req, res) => {
 });
 
 router.post("/json_to_yaml", (req, res) => {
-  const result = stringify(req.body);
+  const result = stringify(req.body, { lineWidth: 0 });
   res.send({ json: result });
 });
 
