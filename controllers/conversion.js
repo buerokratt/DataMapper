@@ -164,6 +164,12 @@ router.post(
         rules: rules
           .map((entry) => ({
             rule: entry.rule,
+            ...("conversation_start" in entry && {
+              conversation_start: entry.conversation_start,
+            }),
+            ...("wait_for_user_input" in entry && {
+              wait_for_user_input: entry.wait_for_user_input,
+            }),
             steps: entry.steps
               .map((step) => {
                 const formattedStep = {};
