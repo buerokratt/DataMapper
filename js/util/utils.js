@@ -85,3 +85,57 @@ export const getUrl = (dir) => {
   }
   return dir.substring(startIndex);
 };
+
+export const getHeadersMapping = (csv_type) => {
+  if (csv_type === "companies") {
+    return {
+      Registrikood: "registry_code",
+      Nimi: "name",
+      Liik: "type",
+      "Registreeritud käibemaksukohustuslaste registrisse": "vat_register",
+      "EMTAK tegevusvaldkond, mis on EMTAKi struktuuris tähistatud tähtkoodiga":
+        "emtak_field_of_activity",
+      Maakond: "county",
+      "Riiklikud Maksud": "national_taxes",
+      "Tööjõumaksud Ja Maksed": "labor_taxes_and_payments",
+      Kaive: "turnover",
+      Tootajaid: "workers",
+    };
+  } else if (csv_type === "municipalities") {
+    return {
+      KUU: "month",
+      MAAKOND: "county",
+      "KOHALIK OMAVALITSUS": "local_government",
+      TEGEVUSALA: "field_of_activity",
+      "Keskmine palk sellel tegevusalal omavalitsuse territooriumil tegutsevates ettevõtetes (eurodes)":
+        "average_salary_in_field_of_activity_municipality",
+      "Keskmine palk Eestis (eurodes)": "average_salary_estonia",
+      "Keskmine palk sellel tegevusalal (eurodes)":
+        "average_salary_in_field_of_activity",
+      "Juriidiliste isikute arv omavalitsuses":
+        "legal_entities_count_municipality",
+      "Tegutsevate ettevõtete arv omavalitsuses":
+        "companies_count_municipality",
+      "Tegutsevate ettevõtete arv Eestis": "companies_count_estonia",
+      "Tegutsevate ettevõtete arv sellel tegevusalal":
+        "companies_count_in_field_of_activity",
+      "Töötajatega ettevõtete arv omavalitsuses":
+        "companies_count_with_employees_municipality",
+      "Töötajatega ettevõtete arv Eestis":
+        "companies_count_with_employees_estonia",
+      "Töötajatega ettevõtete arv sellel tegevusalal Eestis":
+        "companies_count_with_employees_in_field_of_activity_estonia",
+      "Deklaratsiooni KMD esitavate juriidiliste isikute arv omavalitsuses":
+        "municipality_legal_entities_kmd_count",
+      "Käive kokku (eurodes)": "total_turnover",
+      "Eksport  (eurodes)": "export",
+      "Tasumisele kuuluv käibemaks (eurodes)": "vat_payable",
+      "Omavalitsuse tööandjate deklaratsioonis TSD märgitud töötajate arv":
+        "municipal_employers_tsd_count",
+      "Omavalitsuse tööandjate  deklareeritud tööjõumaksud (eurodes)":
+        "labor_taxes_declared_by_municipal_employer",
+    };
+  } else {
+    return {};
+  }
+};

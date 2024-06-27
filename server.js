@@ -4,6 +4,7 @@ import setRateLimit from "express-rate-limit";
 import { body, matchedData, validationResult } from "express-validator";
 import jsdom from "jsdom";
 const { JSDOM } = jsdom;
+import Papa from "papaparse";
 import secrets from "./controllers/secrets.js";
 import fs from "fs";
 import files from "./controllers/files.js";
@@ -20,11 +21,17 @@ import { generatePdf } from "./js/generate/pdf.js";
 import { generatePdfToBase64 } from "./js/generate/pdfToBase64.js";
 import { generateHTMLTable } from "./js/convert/pdf.js";
 import * as helpers from "./lib/helpers.js";
-import { parseBoolean } from "./js/util/utils.js";
+import {
+  buildContentFilePath,
+  getHeadersMapping,
+  parseBoolean,
+} from "./js/util/utils.js";
+import base64ToText from "./js/util/base64ToText.js";
 import conversion from "./controllers/conversion.js";
 import ruuter from "./controllers/ruuter.js";
 import merge from "./controllers/merge.js";
 import mergeYaml from "./js/file/mergeYaml.js";
+import readFullFile from "./js/file/read-file.js";
 import cron from "./controllers/cron.js";
 import object from "./controllers/object.js";
 import validate from "./controllers/validate.js";
@@ -200,6 +207,55 @@ app.post("/js/generate/pdf", (req, res) => {
 
   generatePdf(filename, template, res);
 });
+
+app.post(
+  "/parse-csv-to-opensearch-data",
+  [
+    body("file_path")
+      .isString()
+      .withMessage("file_path is required and must be a string"),
+    body("csv_type")
+      .isString()
+      .optional()
+      .withMessage("csv_type must be a string"),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { file_path, csv_type } = matchedData(req);
+
+    const readResult = await readFullFile(buildContentFilePath(file_path), res);
+    let file = base64ToText(readResult.file);
+
+    const headersMapping = getHeadersMapping(csv_type);
+
+    // Needed when csv second row is a header
+    if (csv_type === "municipalities") {
+      file = file.split("\n").slice(1).join("\n");
+    }
+
+    const result = Papa.parse(file, {
+      skipEmptyLines: true,
+      header: true,
+      transformHeader: (header) => {
+        if (headersMapping.hasOwnProperty(header)) {
+          return headersMapping[header];
+        } else {
+          return header;
+        }
+      },
+    });
+
+    let bulkData = "";
+    result.data.forEach((item) => {
+      bulkData += JSON.stringify({ index: {} }) + "\n";
+      bulkData += JSON.stringify(item) + "\n";
+    });
+    res.send(bulkData);
+  }
+);
 
 app.get("/js/*", rateLimit, (req, res) => {
   const normalizedPath = path
