@@ -22,7 +22,7 @@
     "nodemailer": "^6.9.1",
     "papaparse": "^5.4.1",
     "replace-in-file": "^6.3.5",
-    "yaml": "^2.2.1"
+    "yaml": "^2.4.3"
   },
   "engines": {
     "node": "^20.13.1",
