@@ -3,7 +3,7 @@ name: Build and publish DataMapper
 on:
   push:
     branches:
-      - dev
+      - v2.0.1
     paths:
       - '.env'
 
