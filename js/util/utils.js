@@ -29,6 +29,7 @@ export const buildContentFilePath = (fileName) => {
   const normalizedPath = path
     .normalize(fileName)
     .replace(/^(\.\.(\/|\\|$))+/, "");
+  console.log("normalizedPath", normalizedPath);
   return path.join(process.env.CONTENT_FOLDER || "data", normalizedPath);
 };
 
