@@ -33,9 +33,14 @@ router.post("/json_to_yaml_domain", (req, res) => {
     const processedLines = lines.map((line) => {
       const trimmedLine = line.trim();
       if (trimmedLine.startsWith("text:") || trimmedLine.startsWith("- text:")) {
-        const splitObject = line.split(":");
-        const prefix = splitObject[0];
-        const value = splitObject[1].trim();
+        const index = line.indexOf(":");
+        const prefix = line.substring(0, index);
+        const value = line.substring(index + 1).trim();
+
+        if (value.startsWith("'") && value.endsWith("'")) {
+          const innerValue = value.slice(1, -1).replace(/"/g, '\\"');
+          return `${prefix}: "${innerValue}"`;
+        }
 
         if (!value.startsWith('"') || !value.endsWith('"')) {
           const escapedValue = value.replace(/"/g, '\\"');
