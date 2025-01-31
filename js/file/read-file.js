@@ -1,36 +1,41 @@
 import fs from "fs";
 import mime from "mime-types";
 
-export default async function readFile(file_path, res) {
-  if (!file_path) {
-    res.status(400).contentType("text/plain").send("File path is required");
-    return;
-  }
-
-  if (file_path.includes("..")) {
-    res
-      .status(400)
-      .contentType("text/plain")
-      .send("Relative paths are not allowed");
-    return;
-  }
-  const mimeType = mime.lookup(file_path);
-  const name = file_path.split(/[\\/]/g).pop();
-
-  fs.readFile(file_path, "utf8", (err, data) => {
-    if (err) {
-      res.status(404).send("File not found");
+export default function readFile(file_path) {
+  return new Promise((resolve, reject) => {
+    if (!file_path) {
+      reject({ status: 400, message: "File path is required" });
       return;
     }
-    const file = Buffer.from(data).toString("base64");
 
-    res.setHeader("Content-Type", "application/json; charset=utf8");
+    if (file_path.includes("..")) {
+      reject({ status: 400, message: "Relative paths are not allowed" });
+      return;
+    }
 
-    const result = {
-      name: name,
-      file: file,
-      mimeType: mimeType,
-    };
-    res.json(result);
+    const mimeType = mime.lookup(file_path);
+    const name = file_path.split(/[\\/]/g).pop();
+
+    const stream = fs.createReadStream(file_path, { encoding: "utf8" });
+    let file = "";
+
+    stream.on("error", (err) => {
+      reject({ status: 404, message: "File not found" });
+    });
+
+    stream.on("data", (chunk) => {
+      file += chunk;
+    });
+
+    stream.on("end", () => {
+      const fileBase64 = Buffer.from(file).toString("base64");
+
+      const result = {
+        name: name,
+        file: fileBase64,
+        mimeType: mimeType,
+      };
+      resolve(result);
+    });
   });
 }

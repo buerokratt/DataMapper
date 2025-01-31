@@ -1,5 +1,6 @@
 import express from "express";
 import { body, matchedData, validationResult } from "express-validator";
+import { isValidIntentName } from '../lib/helpers.js';
 
 const router = express.Router();
 
@@ -21,7 +22,7 @@ router.post(
 
     const { rulesJson, searchIntentName } = matchedData(req);
 
-    if (!/^[0-9a-zA-Z-._/]+$/.test(searchIntentName)) {
+    if (!isValidIntentName(searchIntentName)) {
       return res
         .status(400)
         .send({ error: "Search intent name contains illegal characters" });
@@ -38,6 +39,43 @@ router.post(
       .filter((value) => value);
 
     return res.status(200).send({ result });
+  }
+);
+
+router.post(
+  "/responses/remove-by-intent-name",
+  [
+    body("responses")
+      .isObject()
+      .withMessage("responses is required and must be an object"),
+    body("intent")
+      .isString()
+      .withMessage("intent is required and must be a string"),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { responses, intent } = matchedData(req);
+
+    if (!isValidIntentName(intent)) {
+      return res
+        .status(400)
+        .send({ error: "Intent name contains illegal characters" });
+    }
+
+    const pattern = new RegExp(`^utter_${intent}`);
+    
+    const result = Object.entries(responses).reduce((acc, [key, value]) => {
+      if (!pattern.test(key)) {
+        acc[key] = value;
+      }
+      return acc;
+    }, {});
+
+    return res.status(200).send(result);
   }
 );
 

@@ -2,8 +2,7 @@ import express from "express";
 import { create, engine } from "express-handlebars";
 import setRateLimit from "express-rate-limit";
 import { body, matchedData, validationResult } from "express-validator";
-import jsdom from "jsdom";
-const { JSDOM } = jsdom;
+import Papa from "papaparse";
 import secrets from "./controllers/secrets.js";
 import fs from "fs";
 import files from "./controllers/files.js";
@@ -16,15 +15,20 @@ import * as path from "path";
 import { fileURLToPath } from "url";
 
 import sendMockEmail from "./js/email/sendMockEmail.js";
-import { generatePdf } from "./js/generate/pdf.js";
-import { generatePdfToBase64 } from "./js/generate/pdfToBase64.js";
-import { generateHTMLTable } from "./js/convert/pdf.js";
+import { convertHtmlToPdf } from "./js/generate/convertHtmlToPdf.js";
+import { generateMessagesTable } from "./js/convert/pdf.js";
 import * as helpers from "./lib/helpers.js";
-import { parseBoolean } from "./js/util/utils.js";
+import {
+  buildContentFilePath,
+  getHeadersMapping,
+  parseBoolean,
+} from "./js/util/utils.js";
+import base64ToText from "./js/util/base64ToText.js";
 import conversion from "./controllers/conversion.js";
 import ruuter from "./controllers/ruuter.js";
 import merge from "./controllers/merge.js";
 import mergeYaml from "./js/file/mergeYaml.js";
+import readFullFile from "./js/file/read-file.js";
 import cron from "./controllers/cron.js";
 import object from "./controllers/object.js";
 import validate from "./controllers/validate.js";
@@ -32,6 +36,7 @@ import utils from "./controllers/utils.js";
 import domain from "./controllers/domain.js";
 import forms from "./controllers/forms.js";
 import { requestLoggerMiddleware } from "./lib/requestLoggerMiddleware.js";
+import "./watchers/watcher.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
@@ -41,20 +46,21 @@ const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
 const hbs = create({ helpers });
 
 const PORT = process.env.PORT || 3000;
+const REQUEST_SIZE_LIMIT = '100mb';
 const app = express().disable("x-powered-by");
 const rateLimit = setRateLimit({
+  // One minute
   windowMs: 60 * 1000,
-  max: 30,
+  max: process.env.RATE_LIMIT_PER_MINUTE ?? 30,
   message: "Too many requests",
   headers: true,
   statusCode: 429,
 });
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: REQUEST_SIZE_LIMIT }));
 app.use(bodyParser.text());
 app.use(requestLoggerMiddleware({ logger: console.log }));
 
-app.use(express.json());
 app.use("/file-manager", files);
 app.use("/conversion", conversion);
 app.use("/ruuter", ruuter);
@@ -66,7 +72,7 @@ app.use("/validate", validate);
 app.use("/utils", utils);
 app.use("/domain", domain);
 app.use("/forms", forms);
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ limit: REQUEST_SIZE_LIMIT, extended: true }));
 app.use(
   "/encryption",
   encryption({
@@ -81,6 +87,7 @@ app.use(
     privateKey: privateKey,
   })
 );
+app.use(express.json({ limit: REQUEST_SIZE_LIMIT }));
 
 const handled = (controller) => async (req, res, next) => {
   try {
@@ -171,7 +178,7 @@ app.post(
       .withMessage("csaNameVisible is required and must be a string"),
   ],
   rateLimit,
-  (req, res) => {
+  async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -182,24 +189,70 @@ app.post(
     const template = fs
       .readFileSync(__dirname + "/views/pdf.handlebars")
       .toString();
-    const dom = new JSDOM(template);
 
-    generateHTMLTable(
-      dom.window.document.getElementById("chatHistoryTable"),
+    const html = generateMessagesTable(
+      template,
       messages,
       parseBoolean(csaTitleVisible),
       parseBoolean(csaNameVisible)
     );
-    generatePdfToBase64(dom.window.document.documentElement.innerHTML, res);
+
+    try {
+      res.json({ response: await convertHtmlToPdf(html) });
+    } catch (error) {
+      res.status(500).json({message: "Error generating PDF"});
+    }
   }
 );
 
-app.post("/js/generate/pdf", (req, res) => {
-  const filename = req.body.filename;
-  const template = req.body.template;
+app.post(
+  "/parse-csv-to-opensearch-data",
+  [
+    body("file_path")
+      .isString()
+      .withMessage("file_path is required and must be a string"),
+    body("csv_type")
+      .isString()
+      .optional()
+      .withMessage("csv_type must be a string"),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { file_path, csv_type } = matchedData(req);
 
-  generatePdf(filename, template, res);
-});
+    const readResult = await readFullFile(buildContentFilePath(file_path), res);
+    let file = base64ToText(readResult.file);
+
+    const headersMapping = getHeadersMapping(csv_type);
+
+    // Needed when csv second row is a header
+    if (csv_type === "municipalities") {
+      file = file.split("\n").slice(1).join("\n");
+    }
+
+    const result = Papa.parse(file, {
+      skipEmptyLines: true,
+      header: true,
+      transformHeader: (header) => {
+        if (headersMapping.hasOwnProperty(header)) {
+          return headersMapping[header];
+        } else {
+          return header;
+        }
+      },
+    });
+
+    let bulkData = "";
+    result.data.forEach((item) => {
+      bulkData += JSON.stringify({ index: {} }) + "\n";
+      bulkData += JSON.stringify(item) + "\n";
+    });
+    res.send(bulkData);
+  }
+);
 
 app.get("/js/*", rateLimit, (req, res) => {
   const normalizedPath = path

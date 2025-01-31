@@ -14,6 +14,34 @@ router.post("/objects", async (req, res) => {
   res.json({ ...object1, ...object2 });
 });
 
+router.post("/response_objects", async (req, res) => {
+  const { object1, object2 } = req.body;
+
+  if (!object1 || !object2) {
+    res.status(400).contentType("text/plain").send("Both objects are required");
+    return;
+  }
+
+  const response = { ...object1, ...object2 };
+
+  for (const key in response) {
+    if (Array.isArray(response[key])) {
+      response[key].forEach((obj) => {
+        if (obj.text) {
+          obj.text = obj.text
+            .replaceAll(/\n{2,}/g, "\n")
+            .replaceAll("\n", "\\n\\n");
+        }
+      });
+    } else if (response[key].text) {
+      data[key].text = data[key].text
+        .replaceAll(/\n{2,}/g, "\n")
+        .replaceAll("\n", "\\n\\n");
+    }
+  }
+  res.json(response);
+});
+
 router.post("/remove-key", async (req, res) => {
   const { object, key } = req.body;
 

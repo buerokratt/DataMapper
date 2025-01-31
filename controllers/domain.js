@@ -2,8 +2,8 @@ import express from "express";
 
 const router = express.Router();
 
-router.post("/domainUpdateExistingResponse", (req, res) => {
-  const { json, searchKey, newKey, newKeyValue } = req.body;
+router.post("/update-existing-response", (req, res) => {
+  const { json, searchKey, newKey, newKeyValue, deleteOldValue = true } = req.body;
   if (!json || !searchKey || !newKey || !newKeyValue) {
     return res.status(400).json({
       message: "json, searchKey, newKey, newKeyValue are required fields",
@@ -17,7 +17,7 @@ router.post("/domainUpdateExistingResponse", (req, res) => {
           text: newKeyValue,
         },
       ];
-      delete json[key];
+      if (deleteOldValue) delete json[key];
     }
   });
 

@@ -29,6 +29,12 @@ router.post("/object-list-contains-id", async (req, res) => {
   res.json(exists);
 });
 
+router.post("/today-minus-days", async (req, res) => {
+    const result = new Date();
+    result.setDate(result.getDate() - req.body.days);
+    return res.json({data: result});
+});
+
 router.post(
   "/calculate-sha256-checksum",
   bodyParser.text({ type: "text/plain" }),

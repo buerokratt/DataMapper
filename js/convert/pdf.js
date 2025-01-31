@@ -1,7 +1,7 @@
 import { extractMessageInfo } from "../util/pdfs.js";
 
-export const generateHTMLTable = (
-  chatHistoryTable,
+export const generateMessagesTable = (
+  template,
   messages,
   csaTitleVisible,
   csaNameVisible
@@ -12,11 +12,14 @@ export const generateHTMLTable = (
                   <th style="text-align: left">Aeg</th>
               </tr>`;
 
-  for (const element of messages) {
+  for (const [i, element] of messages.entries()) {
+    const previousMessage = i > 0 ? messages[i - 1] : null;
+
     const { author, message, date } = extractMessageInfo(
       element,
+      previousMessage,
       csaTitleVisible,
-      csaNameVisible
+      csaNameVisible,
     );
 
     _html += `<tr>
@@ -26,5 +29,5 @@ export const generateHTMLTable = (
         </tr>`;
   }
 
-  chatHistoryTable.innerHTML = _html;
+  return template.replace("{{{table}}}", _html);
 };
