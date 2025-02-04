@@ -267,7 +267,7 @@ router.post('/chart-data-to-xlsx', [
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('Sheet1');
   
-  const headers = Object.keys(req.body.data[0]);
+  const headers = Object.keys(req.body.data[0] ?? []);
   const headerRow = worksheet.addRow(headers);
   
   headers.forEach((_, index) => {
