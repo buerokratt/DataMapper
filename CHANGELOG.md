@@ -1,3 +1,3 @@
-### 2.2.1 (31, Jan 2025)
-## Others
-- Delete .github/workflows/create-release.yml by [<u>@jaX10bt</u>](https://www.github.com/jaX10bt) in [#885e638](https://github.com/buerokratt/DataMapper/commit/885e638)
+### 2.2.1 (06, Feb 2025)
+## Chores
+- **385**: Hot-Fix Empty Chart xlsx download (#140) by [<u>@Ahmed yasser</u>](https://www.github.com/Ahmedyasser) in [#562c24a](https://github.com/buerokratt/DataMapper/commit/562c24a)
