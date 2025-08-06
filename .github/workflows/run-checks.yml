@@ -1,0 +1,23 @@
+name: Run checks
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    types: [opened, ready_for_review, reopened, synchronize]
+concurrency:
+  group: ${{ github.ref }}-checks
+  cancel-in-progress: true
+
+jobs:
+  format-check:
+    uses: ./.github/workflows/run-check.yml
+    with:
+      command: npm run format
+  lint-check:
+    uses: ./.github/workflows/run-check.yml
+    with:
+      command: npm run lint
+  test:
+    uses: ./.github/workflows/run-check.yml
+    with:
+      command: npm run test:run
