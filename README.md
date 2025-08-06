@@ -56,8 +56,15 @@ npm start
 ### Formatting
 
 ```bash
-npm run format:check   # Check if the code is formatted, without making changes
-npm run format         # Format the code
+npm run format         # Check if the code is formatted, without making changes
+npm run format:fix     # Format the code
+```
+
+### Linting
+
+```bash
+npm run lint           # Check for linting issues, without making changes
+npm run lint:fix       # Automatically fix linting issues
 ```
 
 ### Tests
