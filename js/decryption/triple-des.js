@@ -14,7 +14,7 @@ export default async function tripleDesDecrypt(cipher, key, isObject) {
       error: false,
       content: !isObject ? bytes.toString(crypto.enc.Utf8) : JSON.parse(bytes.toString(crypto.enc.Utf8)),
     };
-      } catch (_) {
+  } catch (_) {
     return {
       error: true,
       message: 'Triple DES Decryption Failed',

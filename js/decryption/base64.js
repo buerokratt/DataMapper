@@ -11,7 +11,7 @@ export default async function base64Decrypt(cipher, isObject) {
       error: false,
       content: !isObject ? atob(cipher) : JSON.parse(atob(cipher)),
     };
-      } catch (_) {
+  } catch (_) {
     return {
       error: true,
       message: 'Base64 Decryption Failed',

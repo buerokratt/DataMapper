@@ -17,7 +17,7 @@ export default async function deleteFile(file_path) {
       error: false,
       message: 'File deleted successfully',
     };
-      } catch (_) {
+  } catch (_) {
     return {
       error: true,
       message: 'Unable to delete file',

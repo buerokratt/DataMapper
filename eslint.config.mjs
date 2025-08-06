@@ -4,15 +4,15 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import unusedImports from 'eslint-plugin-unused-imports';
 import * as importPlugin from 'eslint-plugin-import';
-import vitest from "@vitest/eslint-plugin";
+import vitest from '@vitest/eslint-plugin';
 import sonarjs from 'eslint-plugin-sonarjs';
 
 export default [
   // Test files configuration
   {
-    files: ["**/*.spec.ts"],
+    files: ['**/*.spec.ts'],
     plugins: {
-      vitest
+      vitest,
     },
     rules: {
       ...vitest.configs.recommended.rules,
@@ -20,7 +20,7 @@ export default [
   },
   // TypeScript files configuration
   {
-    files: ["**/*.ts", "**/*.tsx"],
+    files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
       globals: {
         ...globals.node,
@@ -37,8 +37,8 @@ export default [
     plugins: {
       '@typescript-eslint': tseslint.plugin,
       'unused-imports': unusedImports,
-      'import': importPlugin,
-      'sonarjs': sonarjs,
+      import: importPlugin,
+      sonarjs: sonarjs,
     },
     rules: {
       ...eslint.configs.recommended.rules,
@@ -68,9 +68,9 @@ export default [
       'import/order': [
         'error',
         {
-          'groups': ['builtin', 'external', ['parent', 'sibling'], 'index'],
+          groups: ['builtin', 'external', ['parent', 'sibling'], 'index'],
           'newlines-between': 'always',
-          'alphabetize': { order: 'asc', caseInsensitive: true },
+          alphabetize: { order: 'asc', caseInsensitive: true },
         },
       ],
       'sort-imports': [
@@ -85,7 +85,7 @@ export default [
   },
   // JavaScript files configuration
   {
-    files: ["**/*.js", "**/*.mjs"],
+    files: ['**/*.js', '**/*.mjs'],
     ...eslint.configs.recommended,
     ...eslintPluginPrettierRecommended,
     languageOptions: {
@@ -98,8 +98,8 @@ export default [
     },
     plugins: {
       'unused-imports': unusedImports,
-      'import': importPlugin,
-      'sonarjs': sonarjs,
+      import: importPlugin,
+      sonarjs: sonarjs,
     },
     rules: {
       'no-unused-vars': 'off',
@@ -118,9 +118,9 @@ export default [
       'import/order': [
         'error',
         {
-          'groups': ['builtin', 'external', ['parent', 'sibling'], 'index'],
+          groups: ['builtin', 'external', ['parent', 'sibling'], 'index'],
           'newlines-between': 'always',
-          'alphabetize': { order: 'asc', caseInsensitive: true },
+          alphabetize: { order: 'asc', caseInsensitive: true },
         },
       ],
       'sort-imports': [
@@ -133,9 +133,9 @@ export default [
       ...sonarjs.configs.recommended.rules,
     },
   },
-  
+
   // Global ignores
   {
     ignores: ['eslint.config.mjs'],
   },
-]; 
+];

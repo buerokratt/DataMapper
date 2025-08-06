@@ -18,7 +18,7 @@ export default async function readFileDir(file_path) {
       message: 'file readed successfully',
       data: data,
     };
-      } catch (_) {
+  } catch (_) {
     return {
       error: true,
       message: 'Unable to read file',

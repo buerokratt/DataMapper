@@ -13,7 +13,7 @@ export default async function tripleDesEncrypt(content, key) {
       error: false,
       cipher: crypto.TripleDES.encrypt(typeof content === 'string' ? content : JSON.stringify(content), key).toString(),
     };
-      } catch (_) {
+  } catch (_) {
     return {
       error: true,
       message: 'Triple Des Encryption Failed',

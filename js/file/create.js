@@ -24,7 +24,7 @@ export default async function createFile(file_path, content) {
       error: false,
       message: 'File created successfully',
     };
-      } catch (_) {
+  } catch (_) {
     return {
       error: true,
       message: 'Unable to create file',

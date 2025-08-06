@@ -24,7 +24,7 @@ export default async function checkIfFileExists(file_path) {
       error: false,
       message: 'File Exists',
     };
-      } catch (_) {
+  } catch (_) {
     return {
       error: true,
       message: 'File Does Not Exist',

@@ -19,7 +19,7 @@ export default async function copyFile(current_path, new_path) {
       error: false,
       message: 'File copied successfully',
     };
-      } catch (_) {
+  } catch (_) {
     return {
       error: true,
       message: 'Unable to copy file',

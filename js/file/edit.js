@@ -29,7 +29,7 @@ export default async function editFile(file_path, from, to) {
       error: false,
       message: 'File edited successfully',
     };
-      } catch (_) {
+  } catch (_) {
     return {
       error: true,
       message: 'Unable to edit file',
