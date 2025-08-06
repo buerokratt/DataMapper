@@ -2,10 +2,10 @@ name: Snyk Security
 
 on:
   push:
-    branches: ["dev"]
+    branches: ['dev']
   schedule:
     - cron: '0 0 * * *'
-    
+
 permissions:
   contents: read
 
@@ -35,7 +35,7 @@ jobs:
         # Authenticate Snyk
         # Use || true to not fail the pipeline
       - name: Snyk Auth
-        run:  snyk auth ${{ secrets.SNYK_TOKEN }}   
+        run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
         # Runs Snyk Code (SAST) analysis and uploads result into GitHub.
         # Use || true to not fail the pipeline
@@ -44,7 +44,7 @@ jobs:
 
       #   # Install Dependencies
       - name: Install Dependencies
-        run:  npm install
+        run: npm install
 
         # Runs Snyk Open Source (SCA) analysis and uploads result to Snyk.
       - name: Snyk Open Source monitor
@@ -53,7 +53,7 @@ jobs:
         # Build the docker image for testing
       - name: Build a Docker image
         run: docker build -t data-mapper .
-      
+
       #   # Runs Snyk Container (Container and SCA) analysis and uploads result to Snyk.
       - name: Snyk Container monitor
         run: snyk container monitor data-mapper
