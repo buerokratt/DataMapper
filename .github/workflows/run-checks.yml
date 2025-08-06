@@ -9,11 +9,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  format-check:
+  format:
     uses: ./.github/workflows/run-check.yml
     with:
       command: npm run format
-  lint-check:
+  lint:
     uses: ./.github/workflows/run-check.yml
     with:
       command: npm run lint
