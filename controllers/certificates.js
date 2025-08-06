@@ -1,5 +1,6 @@
-import express from 'express';
 import { generateKeyPairSync } from 'crypto';
+
+import express from 'express';
 
 const router = express.Router();
 

@@ -21,7 +21,7 @@ export default async function rsaEncrypt(content, publicKey) {
       error: false,
       cipher: rsaData.toString('base64'),
     };
-  } catch (err) {
+      } catch (_) {
     return {
       error: true,
       message: 'RSA Encryption Failed',

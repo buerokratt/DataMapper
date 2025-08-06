@@ -1,41 +1,41 @@
+import crypto from 'crypto';
+import fs from 'fs';
+import * as path from 'path';
+import { fileURLToPath } from 'url';
+
+import axios from 'axios';
+import bodyParser from 'body-parser';
 import express from 'express';
 import { create, engine } from 'express-handlebars';
 import setRateLimit from 'express-rate-limit';
 import { body, matchedData, validationResult } from 'express-validator';
 import Papa from 'papaparse';
-import secrets from './controllers/secrets.js';
-import fs from 'fs';
-import axios from 'axios';
-import files from './controllers/files.js';
-import crypto from 'crypto';
-import bodyParser from 'body-parser';
-import 'dotenv/config';
 
-import encryption from './controllers/encryption.js';
-import decryption from './controllers/decryption.js';
-import * as path from 'path';
-import { fileURLToPath } from 'url';
-
-import sendMockEmail from './js/email/sendMockEmail.js';
-import { convertHtmlToPdf } from './js/generate/convertHtmlToPdf.js';
-import { generateMessagesTable } from './js/convert/pdf.js';
-import * as helpers from './lib/helpers.js';
-import { buildContentFilePath, getHeadersMapping, parseBoolean, parseJwt } from './js/util/utils.js';
-import base64ToText from './js/util/base64ToText.js';
+import certificates from './controllers/certificates.js';
 import conversion from './controllers/conversion.js';
-import ruuter from './controllers/ruuter.js';
+import cron from './controllers/cron.js';
+import decryption from './controllers/decryption.js';
+import domain from './controllers/domain.js';
+import encryption from './controllers/encryption.js';
+import files from './controllers/files.js';
+import forms from './controllers/forms.js';
 import merge from './controllers/merge.js';
+import object from './controllers/object.js';
+import ruuter from './controllers/ruuter.js';
+import secrets from './controllers/secrets.js';
+import 'dotenv/config';
+import utils from './controllers/utils.js';
+import validate from './controllers/validate.js';
+import { generateMessagesTable } from './js/convert/pdf.js';
+import sendMockEmail from './js/email/sendMockEmail.js';
 import mergeYaml from './js/file/mergeYaml.js';
 import readFullFile from './js/file/read-file.js';
-import cron from './controllers/cron.js';
-import object from './controllers/object.js';
-import validate from './controllers/validate.js';
-import utils from './controllers/utils.js';
-import domain from './controllers/domain.js';
-import forms from './controllers/forms.js';
+import { convertHtmlToPdf } from './js/generate/convertHtmlToPdf.js';
+import base64ToText from './js/util/base64ToText.js';
+import { buildContentFilePath, getHeadersMapping, parseBoolean, parseJwt } from './js/util/utils.js';
+import * as helpers from './lib/helpers.js';
 import { requestLoggerMiddleware } from './lib/requestLoggerMiddleware.js';
 import './watchers/watcher.js';
-import certificates from './controllers/certificates.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
@@ -120,7 +120,7 @@ app.use('/secrets', secrets);
 
 app.get(
   '/',
-  handled(async (req, res, next) => {
+  handled(async (req, res, _next) => {
     res.render(__dirname + '/views/home.handlebars', { title: 'Home' });
   }),
 );
@@ -186,7 +186,7 @@ app.post(
 
     try {
       res.json({ response: await convertHtmlToPdf(html) });
-    } catch (error) {
+    } catch (_) {
       res.status(500).json({ message: 'Error generating PDF' });
     }
   },
@@ -284,7 +284,7 @@ app.post(
         },
       );
       res.json({ token: data });
-    } catch (error) {
+    } catch (_) {
       return res.status(401).json({ error: `Unauthorized` });
     }
   },

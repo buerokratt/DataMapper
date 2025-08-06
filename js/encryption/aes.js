@@ -13,7 +13,7 @@ export default async function aesEncrypt(content, key) {
       error: false,
       cipher: crypto.AES.encrypt(typeof content === 'string' ? content : JSON.stringify(content), key).toString(),
     };
-  } catch (err) {
+      } catch (_) {
     return {
       error: true,
       message: 'AES Encryption Failed',

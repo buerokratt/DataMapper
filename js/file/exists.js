@@ -1,4 +1,5 @@
 import fs from 'fs';
+
 import { buildContentFilePath } from '../util/utils.js';
 
 export default async function checkIfFileExists(file_path) {
@@ -23,7 +24,7 @@ export default async function checkIfFileExists(file_path) {
       error: false,
       message: 'File Exists',
     };
-  } catch (err) {
+      } catch (_) {
     return {
       error: true,
       message: 'File Does Not Exist',

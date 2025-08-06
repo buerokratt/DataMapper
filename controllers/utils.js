@@ -1,6 +1,7 @@
-import express from 'express';
 import { createHash } from 'crypto';
+
 import bodyParser from 'body-parser';
+import express from 'express';
 import { body, matchedData, validationResult } from 'express-validator';
 
 const router = express.Router();

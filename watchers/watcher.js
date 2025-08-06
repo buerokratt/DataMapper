@@ -1,7 +1,8 @@
-import chokidar from 'chokidar';
 import { execFile } from 'child_process';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
+
+import chokidar from 'chokidar';
 
 // Configurable environment variables
 const watchDirectory = process.env.WATCH_DIRECTORY || '/workspace/app'; // Directory to watch
@@ -10,7 +11,6 @@ const parsedInterval = parseInt(process.env.SYNC_INTERVAL_MINUTES, 10);
 const intervalMinutes = Number.isNaN(parsedInterval) ? 10 : parsedInterval; // Interval in minutes, default is 10
 
 let changes = []; // To keep track of file changes
-let lastSyncTime = Date.now(); // Time when the sync script last ran
 
 // Helper function for logging with timestamp
 function logWithTimestamp(message) {

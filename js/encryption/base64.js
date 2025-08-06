@@ -11,7 +11,7 @@ export default async function base64Encrypt(content) {
       error: false,
       cipher: btoa(typeof content === 'string' ? content : JSON.stringify(content)),
     };
-  } catch (err) {
+      } catch (_) {
     return {
       error: true,
       message: 'Base64 Encryption Failed',

@@ -1,4 +1,5 @@
 import replace from 'replace-in-file';
+
 import { buildContentFilePath, isValidFilePath } from '../util/utils.js';
 
 export default async function editFile(file_path, from, to) {
@@ -28,7 +29,7 @@ export default async function editFile(file_path, from, to) {
       error: false,
       message: 'File edited successfully',
     };
-  } catch (err) {
+      } catch (_) {
     return {
       error: true,
       message: 'Unable to edit file',

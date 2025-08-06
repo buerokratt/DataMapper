@@ -61,6 +61,8 @@ export default [
           varsIgnorePattern: '^_',
           args: 'after-used',
           argsIgnorePattern: '^_',
+          caughtErrors: 'all',
+          caughtErrorsIgnorePattern: '^_',
         },
       ],
       'import/order': [
@@ -109,6 +111,8 @@ export default [
           varsIgnorePattern: '^_',
           args: 'after-used',
           argsIgnorePattern: '^_',
+          caughtErrors: 'all',
+          caughtErrorsIgnorePattern: '^_',
         },
       ],
       'import/order': [

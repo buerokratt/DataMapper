@@ -1,5 +1,5 @@
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
 
 export default async function deleteAllThatStartsWith(currentPath, keyword, res) {
   fs.readdir(currentPath, (err, files) => {

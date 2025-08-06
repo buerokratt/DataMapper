@@ -1,5 +1,6 @@
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
+
 import { isValidFilePath } from '../util/utils.js';
 
 export default async function copyFile(current_path, new_path) {
@@ -18,7 +19,7 @@ export default async function copyFile(current_path, new_path) {
       error: false,
       message: 'File copied successfully',
     };
-  } catch (err) {
+      } catch (_) {
     return {
       error: true,
       message: 'Unable to copy file',

@@ -1,4 +1,4 @@
-async function postExample(name) {
+async function _postExample(name) {
   let data = { name: name };
   await fetch('/example/post', {
     method: 'POST',

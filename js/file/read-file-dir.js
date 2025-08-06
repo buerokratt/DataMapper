@@ -1,4 +1,5 @@
 import fs from 'fs';
+
 import { isValidFilePath } from '../util/utils.js';
 
 export default async function readFileDir(file_path) {
@@ -17,7 +18,7 @@ export default async function readFileDir(file_path) {
       message: 'file readed successfully',
       data: data,
     };
-  } catch (err) {
+      } catch (_) {
     return {
       error: true,
       message: 'Unable to read file',

@@ -1,5 +1,6 @@
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
+
 import { parse as parseYmlToJson } from 'yaml';
 
 export const assignSecrets = (data, result) => {

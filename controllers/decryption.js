@@ -1,8 +1,9 @@
 import express from 'express';
+
 import aesDecrypt from '../js/decryption/aes.js';
-import tripleDesDecrypt from '../js/decryption/triple-des.js';
 import base64Decrypt from '../js/decryption/base64.js';
 import rsaDecrypt from '../js/decryption/rsa.js';
+import tripleDesDecrypt from '../js/decryption/triple-des.js';
 
 const wrapper = function (config) {
   const router = express.Router();

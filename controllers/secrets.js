@@ -1,4 +1,5 @@
 import express from 'express';
+
 import getAllSecrets from '../js/secrets/get-all.js';
 import getSecretsWithPriority from '../js/secrets/get-with-priority.js';
 

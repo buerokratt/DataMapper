@@ -1,6 +1,6 @@
-import path from 'path';
 import fs from 'fs';
-import { buildContentFilePath, isValidFilePath } from '../util/utils.js';
+
+import { isValidFilePath } from '../util/utils.js';
 
 export default async function moveFile(current_path, new_path) {
   if (!isValidFilePath(current_path) || !isValidFilePath(new_path)) {
@@ -11,10 +11,9 @@ export default async function moveFile(current_path, new_path) {
   }
 
   try {
-    const currentPath = buildContentFilePath(current_path);
-    const newPath = buildContentFilePath(new_path);
-
-    // TODO: restore fs.mkdir if needed to be
+    // Restore fs.mkdir if needed to be
+    // const currentPath = buildContentFilePath(current_path);
+    // const newPath = buildContentFilePath(new_path);
     //    fs.mkdirSync(path.dirname(newPath), { recursive: true });
     fs.renameSync(current_path, new_path);
 

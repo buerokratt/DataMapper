@@ -45,7 +45,7 @@ const extractAuthor = (message, csaTitleVisible, csaNameVisible) => {
 const tryUnesacpe = (content) => {
   try {
     return decodeURIComponent(content);
-  } catch (error) {
+      } catch (_) {
     return content;
   }
 };
