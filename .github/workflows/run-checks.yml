@@ -21,3 +21,10 @@ jobs:
     uses: ./.github/workflows/run-check.yml
     with:
       command: npm run test:run
+  build:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker image build .
