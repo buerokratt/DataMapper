@@ -51,7 +51,16 @@ npm install
 npm start
 ```
 
-## Tests
+## Code quality
+
+### Formatting
+
+```bash
+npm run format:check   # Check if the code is formatted, without making changes
+npm run format         # Format the code
+```
+
+### Tests
 
 Tests are written in TypeScript (and the project should be migrated to TypeScript in the future too). Available npm scripts:
 
