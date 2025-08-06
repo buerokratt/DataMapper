@@ -7,7 +7,8 @@ import * as importPlugin from 'eslint-plugin-import';
 import vitest from "@vitest/eslint-plugin";
 import sonarjs from 'eslint-plugin-sonarjs';
 
-export default tseslint.config(
+export default [
+  // Test files configuration
   {
     files: ["**/*.spec.ts"],
     plugins: {
@@ -17,13 +18,9 @@ export default tseslint.config(
       ...vitest.configs.recommended.rules,
     },
   },
+  // TypeScript files configuration
   {
-    ignores: ['eslint.config.mjs'],
-  },
-  eslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
-  eslintPluginPrettierRecommended,
-  {
+    files: ["**/*.ts", "**/*.tsx"],
     languageOptions: {
       globals: {
         ...globals.node,
@@ -31,19 +28,22 @@ export default tseslint.config(
       },
       ecmaVersion: 2023,
       sourceType: 'module',
+      parser: tseslint.parser,
       parserOptions: {
-        projectService: true,
+        project: true,
         tsconfigRootDir: import.meta.dirname,
       },
     },
-  },
-  {
     plugins: {
+      '@typescript-eslint': tseslint.plugin,
       'unused-imports': unusedImports,
       'import': importPlugin,
       'sonarjs': sonarjs,
     },
     rules: {
+      ...eslint.configs.recommended.rules,
+      ...tseslint.configs.recommended.rules,
+      ...tseslint.configs.recommendedTypeChecked.rules,
       '@typescript-eslint/explicit-function-return-type': 'error',
       '@typescript-eslint/require-await': 'error',
       '@typescript-eslint/return-await': 'error',
@@ -81,4 +81,57 @@ export default tseslint.config(
       ...sonarjs.configs.recommended.rules,
     },
   },
-); 
+  // JavaScript files configuration
+  {
+    files: ["**/*.js", "**/*.mjs"],
+    ...eslint.configs.recommended,
+    ...eslintPluginPrettierRecommended,
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.jest,
+      },
+      ecmaVersion: 2023,
+      sourceType: 'module',
+    },
+    plugins: {
+      'unused-imports': unusedImports,
+      'import': importPlugin,
+      'sonarjs': sonarjs,
+    },
+    rules: {
+      'no-unused-vars': 'off',
+      'unused-imports/no-unused-imports': 'error',
+      'unused-imports/no-unused-vars': [
+        'warn',
+        {
+          vars: 'all',
+          varsIgnorePattern: '^_',
+          args: 'after-used',
+          argsIgnorePattern: '^_',
+        },
+      ],
+      'import/order': [
+        'error',
+        {
+          'groups': ['builtin', 'external', ['parent', 'sibling'], 'index'],
+          'newlines-between': 'always',
+          'alphabetize': { order: 'asc', caseInsensitive: true },
+        },
+      ],
+      'sort-imports': [
+        'error',
+        {
+          ignoreCase: true,
+          ignoreDeclarationSort: true,
+        },
+      ],
+      ...sonarjs.configs.recommended.rules,
+    },
+  },
+  
+  // Global ignores
+  {
+    ignores: ['eslint.config.mjs'],
+  },
+]; 
