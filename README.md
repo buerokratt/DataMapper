@@ -76,3 +76,11 @@ npm test               # Run tests in watch mode
 npm run test:run       # Run tests once
 npm run test:coverage  # Run tests with coverage
 ```
+
+## Continuous Integration
+
+Format, lint, test, and build checks are run on every commit to PRs that are **not** in Draft status. These checks are configured in [this workflow](.github/workflows/run-checks.yml).
+
+<!-- todo below in no ops repo -->
+<!-- todo duplicate rainer notif snyk task -->
+<!-- todo snyk turn off pr creation task -->
