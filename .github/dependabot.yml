@@ -1,14 +1,19 @@
-# todo fix
 version: 2
 updates:
-  - package-ecosystem: 'gradle'
+  - package-ecosystem: 'npm'
     directory: '/'
     schedule:
       interval: 'daily'
       time: '00:00'
-
-  - package-ecosystem: 'github-actions'
-    directory: '/.github/'
-    schedule:
-      interval: 'daily'
-      time: '00:00'
+      timezone: 'Europe/Tallinn'
+    labels:
+      - 'dependencies'
+    open-pull-requests-limit: 10
+    target-branch: 'dev'
+    pull-request-branch-name:
+      separator: '/'
+    groups:
+      vitest:
+        patterns:
+          - 'vitest'
+          - '@vitest/*'
