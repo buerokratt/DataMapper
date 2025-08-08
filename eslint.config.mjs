@@ -18,6 +18,7 @@ export default [
       ...vitest.configs.recommended.rules,
     },
   },
+
   // TypeScript files configuration
   {
     files: ['**/*.ts', '**/*.tsx'],
@@ -83,6 +84,7 @@ export default [
       ...sonarjs.configs.recommended.rules,
     },
   },
+
   // JavaScript files configuration
   {
     files: ['**/*.js', '**/*.mjs'],
