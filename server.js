@@ -14,22 +14,18 @@ import Papa from 'papaparse';
 import certificates from './controllers/certificates.js';
 import conversion from './controllers/conversion.js';
 import cron from './controllers/cron.js';
-import decryption from './controllers/decryption.js';
 import domain from './controllers/domain.js';
-import encryption from './controllers/encryption.js';
-import files from './controllers/files.js';
 import forms from './controllers/forms.js';
 import merge from './controllers/merge.js';
 import object from './controllers/object.js';
 import ruuter from './controllers/ruuter.js';
-import secrets from './controllers/secrets.js';
-import 'dotenv/config';
 import utils from './controllers/utils.js';
 import validate from './controllers/validate.js';
 import { generateMessagesTable } from './js/convert/pdf.js';
 import sendMockEmail from './js/email/sendMockEmail.js';
 import mergeYaml from './js/file/mergeYaml.js';
 import readFullFile from './js/file/read-file.js';
+import generateButtonsList from './js/generate/buttonsList.js';
 import { convertHtmlToPdf } from './js/generate/convertHtmlToPdf.js';
 import base64ToText from './js/util/base64ToText.js';
 import { buildContentFilePath, getHeadersMapping, parseBoolean, parseJwt } from './js/util/utils.js';
@@ -191,6 +187,17 @@ app.post(
     }
   },
 );
+
+app.post('/generate/buttons-list', (req, res) => {
+  const response = generateButtonsList(
+    req.body.list,
+    req.body.service_name,
+    req.body.key,
+    req.body.payload_prefix ?? '',
+    req.body.payload_keys ?? [],
+  );
+  res.status(200).json({ response });
+});
 
 app.post(
   '/parse-csv-to-opensearch-data',
