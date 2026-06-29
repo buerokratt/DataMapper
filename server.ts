@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import fs from 'fs';
+import https from 'https';
 import * as path from 'path';
 
 import axios from 'axios';
@@ -338,6 +339,13 @@ app.post(
         { Login, Password },
         {
           headers: { 'Content-Type': 'application/json' },
+          ...(process.env.SMAX_CA_CERTIFICATE
+            ? {
+                httpsAgent: new https.Agent({
+                  ca: process.env.SMAX_CA_CERTIFICATE.replace(/\\n/g, '\n'),
+                }),
+              }
+            : {}),
         },
       );
       res.json({ token: data });
