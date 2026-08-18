@@ -3,7 +3,6 @@ import fs from 'fs';
 import https from 'https';
 import * as path from 'path';
 
-
 import axios from 'axios';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
@@ -372,7 +371,11 @@ app.post(
       .filter((m) => m.content)
       .map((m) => {
         const timestamp = m.authorTimestamp
-          ? new Date(m.authorTimestamp).toLocaleString('et-EE', { dateStyle: 'short', timeStyle: 'medium', timeZone: 'Europe/Tallinn' })
+          ? new Date(m.authorTimestamp).toLocaleString('et-EE', {
+              dateStyle: 'short',
+              timeStyle: 'medium',
+              timeZone: 'Europe/Tallinn',
+            })
           : '';
         const name = [m.authorFirstName, m.authorLastName].filter(Boolean).join(' ');
         return `[${timestamp}] ${name ? name + ' ' : ''}(${m.authorRole ?? ''}): ${m.content}`;

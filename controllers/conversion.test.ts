@@ -862,9 +862,11 @@ describe('conversion controller', () => {
     });
 
     it('should return 404 when file does not exist', async () => {
-      const res = await request(app).post('/conversion/chats-to-xlsx/unlink').send({
-        filePath: path.join('chat-exports', 'chat-history-missing.xlsx'),
-      });
+      const res = await request(app)
+        .post('/conversion/chats-to-xlsx/unlink')
+        .send({
+          filePath: path.join('chat-exports', 'chat-history-missing.xlsx'),
+        });
 
       expect(res.body).toEqual({ error: 'File not found' });
       expect(res.status).toBe(404);
