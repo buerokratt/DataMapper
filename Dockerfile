@@ -1,5 +1,5 @@
 # Build
-FROM node:20.19.3-alpine AS build
+FROM node:20.20.0-alpine AS build
 WORKDIR /workspace/app/
 EXPOSE 3000
 
@@ -19,7 +19,7 @@ COPY . .
 RUN npm run build
 
 # Runtime
-FROM node:20.19.3-alpine AS run
+FROM node:20.20.0-alpine AS run
 WORKDIR /workspace/app/
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
