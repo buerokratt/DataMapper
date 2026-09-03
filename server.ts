@@ -45,8 +45,6 @@ import {
 import { requestLoggerMiddleware } from './lib';
 import * as helpers from './lib/helpers';
 
-import './watchers/watcher';
-
 dotenv.config();
 
 const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
