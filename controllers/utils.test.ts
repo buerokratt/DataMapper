@@ -254,28 +254,28 @@ describe('utils controller', () => {
       expect(res.status).toBe(200);
     });
 
-    it('should return 500 when domains is missing', async () => {
+    it('should return no grants when domains is missing', async () => {
       const data = { userDomains: { domains: ['1'], selected: ['1'] } };
       const res = await request(app).post('/utils/map-domains-data').send(data);
 
-      expect(res.text).toContain('TypeError: Cannot read properties of undefined');
-      expect(res.status).toBe(500);
+      expect(res.body).toEqual([]);
+      expect(res.status).toBe(200);
     });
 
-    it('should return 500 when userDomains is missing', async () => {
+    it('should return no grants when userDomains is missing', async () => {
       const data = { domains: [{ domainId: '1', name: 'Domain 1', url: 'https://domain1.com' }] };
       const res = await request(app).post('/utils/map-domains-data').send(data);
 
-      expect(res.text).toContain('TypeError: Cannot read properties of undefined');
-      expect(res.status).toBe(500);
+      expect(res.body).toEqual([]);
+      expect(res.status).toBe(200);
     });
 
-    it('should return 500 when body is empty', async () => {
+    it('should return no grants when body is empty', async () => {
       const data = {};
       const res = await request(app).post('/utils/map-domains-data').send(data);
 
-      expect(res.text).toContain('TypeError: Cannot read properties of undefined');
-      expect(res.status).toBe(500);
+      expect(res.body).toEqual([]);
+      expect(res.status).toBe(200);
     });
   });
 });

@@ -18,6 +18,9 @@ COPY . .
 
 RUN npm run build
 
+FROM build AS test
+RUN --network=none npm run test:run -- controllers/utils.test.ts
+
 # Runtime
 FROM node:20.19.3-alpine AS runtime
 WORKDIR /workspace/app/

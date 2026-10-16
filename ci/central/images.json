@@ -1,6 +1,7 @@
 {
   "datamapper": {
     "dockerfile": "ci/central/datamapper.Dockerfile",
-    "context": "."
+    "context": ".",
+    "testTarget": "test"
   }
 }

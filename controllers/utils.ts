@@ -68,13 +68,15 @@ function checkIdExists(array: { id: string }[], id: string): boolean {
 router.post('/map-domains-data', (req: Request, res: Response) => {
   const { domains, userDomains } = req.body as MapDomainsDataRequest;
 
-  const result = domains
-    .filter((domain) => userDomains.domains.includes(domain.domainId))
+  const allowedDomains = Array.isArray(userDomains?.domains) ? userDomains.domains : [];
+  const selectedDomains = Array.isArray(userDomains?.selected) ? userDomains.selected : [];
+  const result = (Array.isArray(domains) ? domains : [])
+    .filter((domain) => allowedDomains.includes(domain.domainId))
     .map((domain) => ({
       id: domain.domainId,
       name: domain.name,
       url: domain.url,
-      selected: userDomains.selected.includes(domain.domainId),
+      selected: selectedDomains.includes(domain.domainId),
     }));
 
   return res.json(result);
