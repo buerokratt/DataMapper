@@ -266,7 +266,9 @@ app.post(
 
     const { file_path, csv_type } = matchedData(req) as { file_path: string; csv_type?: string };
 
-    const readResult = await readFile(buildContentFilePath(file_path));
+    let readResult;
+    try { readResult = await readFile(buildContentFilePath(file_path)); }
+    catch { return res.status(404).json({ error: 'Input file unavailable' }); }
     let file = base64ToText(readResult.file);
     const headersMapping = getHeadersMapping(csv_type);
 
@@ -281,6 +283,10 @@ app.post(
         return (headersMapping as Record<string, string>)[header] ?? header;
       },
     });
+
+    if (result.errors.length > 0) {
+      return res.status(400).json({ error: 'Invalid CSV input' });
+    }
 
     let bulkData = '';
     result.data.forEach((item: any) => {
